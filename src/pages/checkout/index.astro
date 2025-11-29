@@ -1,9 +1,18 @@
 ---
 import BaseLayout from "../../layouts/Layout.astro";
+
+const user = await Astro.locals.currentUser();
+
+if (!user) {
+  return Astro.redirect("/sign-in");
+}
+
+const userEmail = user.emailAddresses[0]?.emailAddress;
+const userName = user.fullName;
 ---
 
 <BaseLayout>
-  <main class="flex-grow px-4 pb-12">
+  <main class="grow px-4 pb-12">
     <div class="pt-10 pb-16 text-text-light">
       <main class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
@@ -74,6 +83,7 @@ import BaseLayout from "../../layouts/Layout.astro";
                 type="text"
                 class="mt-2 w-full rounded-lg border border-gray-300 bg-gray-50 h-12 px-4 text-gray-900 focus:ring-2 focus:ring-gray-800 focus:border-gray-800 transition"
                 placeholder="Ej: Juan Pérez"
+                value={userName}
                 required
               />
             </label>
@@ -85,6 +95,8 @@ import BaseLayout from "../../layouts/Layout.astro";
                 type="email"
                 class="mt-2 w-full rounded-lg border border-gray-300 bg-gray-50 h-12 px-4 text-gray-900 focus:ring-2 focus:ring-gray-800 focus:border-gray-800 transition"
                 placeholder="correo@mail.com"
+                value={userEmail}
+                readonly
                 required
               />
             </label>
