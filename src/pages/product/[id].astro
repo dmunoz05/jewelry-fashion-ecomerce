@@ -10,7 +10,7 @@ export async function getStaticPaths() {
 
     const products = await response.json();
 
-    return products.map((product) => ({
+    return products.map((product: any) => ({
       params: { id: product.id.toString() },
     }));
   } catch (error) {
@@ -43,50 +43,24 @@ try {
   );
   const allProducts = await response.json();
 
-  productsRelationShip = allProducts.filter((p) => p.id.toString() !== id);
+  productsRelationShip = allProducts.filter((p: any) => p.id.toString() !== id);
 } catch (error) {
   console.error("Error loading related products:", error);
 }
+
+const formatPrice = (value: any) => {
+  const number = Number(value) || 0;
+  return number.toLocaleString("es-CO", {
+    style: "currency",
+    currency: "COP",
+    minimumFractionDigits: 0,
+  });
+};
 ---
 
-<!-- ---
-import BaseLayout from "../../layouts/Layout.astro";
-
-export async function getStaticPaths() {
-  // Variables
-  let productsRelationShip = [];
-  let productSelected = null;
-  // Fetch producto individual
-  try {
-    const response = await fetch(
-      `https://admin.jewelryfashionoficial.com/wp-json/custom-api/v1/api-json/v1/product_exists/${id}`
-    );
-    productSelected = await response.json();
-    productSelected = productSelected[0] || null;
-  } catch (err) {
-    console.error("Error loading product:", err);
-    productSelected = null;
-  }
-
-  // Fetch productos relacionados
-  try {
-    const response = await fetch(
-      "https://admin.jewelryfashionoficial.com/wp-json/custom-api/v1/api-json/v1/get_products/home/?nocache=12345"
-    );
-    productsRelationShip = await response.json();
-
-    // Evitar mostrar el mismo producto como relacionado
-    productsRelationShip = productsRelationShip.filter((p: any) => p.id !== id);
-  } catch (err) {
-    console.error("Error loading related products:", err);
-  }
-}
-
-const { id } = Astro.props;
---- -->
 <BaseLayout>
   <div
-    class="relative flex min-h-screen w-full flex-col bg-[#000000] overflow-x-hidden"
+    class="relative flex min-h-screen w-full flex-col mt-20 bg-[#000000] overflow-x-hidden"
   >
     <main class="flex-grow container mx-auto px-4 py-8">
       <div class="grid grid-cols-1 md:grid-cols-2 md:gap-12">
@@ -94,11 +68,13 @@ const { id } = Astro.props;
         <div class="flex flex-col gap-4">
           <!-- Imagen principal -->
           <div
-            class="relative w-full aspect-square bg-center bg-no-repeat bg-cover rounded-xl bg-bg-accent-darker"
+            id="main-image-container"
+            class="relative w-full aspect-square bg-center bg-no-repeat bg-cover rounded-xl bg-bg-accent-darker transition-all duration-300"
             style={`background-image: url('${productSelected?.image_url || ""}')`}
           >
             <button
-              class="absolute top-3 right-3 bg-black/50 p-2 rounded-full text-white hover:bg-black/75 transition-colors"
+              id="zoom-btn"
+              class="absolute top-3 right-3 bg-black/50 p-2 rounded-full text-white hover:bg-black/75 transition-colors z-10"
             >
               <span class="material-symbols-outlined">zoom_in</span>
             </button>
@@ -110,7 +86,7 @@ const { id } = Astro.props;
               <div class="grid grid-cols-4 gap-3">
                 {productSelected.gallery.map((img: string) => (
                   <div
-                    class="w-full aspect-square bg-center bg-no-repeat bg-cover rounded-lg bg-bg-accent-darker cursor-pointer hover:opacity-80 transition"
+                    class="gallery-thumb w-full aspect-square bg-center bg-no-repeat bg-cover rounded-lg bg-bg-accent-darker cursor-pointer hover:opacity-80 transition ring-2 ring-transparent hover:ring-primary"
                     style={`background-image: url('${img}')`}
                   />
                 ))}
@@ -155,10 +131,10 @@ const { id } = Astro.props;
                     <>
                       <li>
                         Diámetro interno:{" "}
-                        {productSelected?.measure_diameter || "—"}
+                        {productSelected?.measure_diameter || ""}
                       </li>
-                      <li>Grosor: {productSelected?.gauge || "—"}</li>
-                      <li>Material: {productSelected?.material || "—"}</li>
+                      <li>Grosor: {productSelected?.gauge || ""}</li>
+                      <li>Material: {productSelected?.material || ""}</li>
                     </>
                   )
                 }
@@ -169,13 +145,13 @@ const { id } = Astro.props;
           <!-- 💰 Precios -->
           <div class="flex items-baseline gap-3">
             <p class="text-white text-3xl font-bold">
-              ${productSelected?.price ?? "—"}
+              {formatPrice(productSelected?.price)}
             </p>
 
             {
               productSelected?.compare_price ? (
                 <p class="text-gray-500 text-lg font-normal line-through">
-                  ${productSelected.compare_price}
+                  {formatPrice(productSelected.compare_price)}
                 </p>
               ) : null
             }
@@ -229,7 +205,7 @@ const { id } = Astro.props;
                   </p>
                   <p class="text-gray-400 text-xs">{product.material}</p>
                   <p class="text-white text-sm font-bold mt-1">
-                    ${product.price}
+                    {formatPrice(product.price)}
                   </p>
                 </div>
               </div>
@@ -238,6 +214,30 @@ const { id } = Astro.props;
         </div>
       </div>
     </main>
+
+    <!-- MODAL DE ZOOM -->
+    <div
+      id="image-modal"
+      class="fixed inset-0 z-[9999] hidden bg-black/95 backdrop-blur-sm flex items-center justify-center opacity-0 transition-opacity duration-300"
+    >
+      <button
+        id="modal-close"
+        class="absolute top-6 right-6 text-white/70 hover:text-white transition-colors z-50 bg-black/20 p-2 rounded-full"
+      >
+        <span class="material-symbols-outlined text-4xl">close</span>
+      </button>
+
+      <div
+        class="relative w-full h-full flex items-center justify-center p-4 overflow-hidden"
+      >
+        <img
+          id="modal-img"
+          src=""
+          alt="Zoom"
+          class="max-w-full max-h-full object-contain transition-transform duration-200 cursor-zoom-in"
+        />
+      </div>
+    </div>
   </div>
 </BaseLayout>
 
@@ -253,40 +253,135 @@ const { id } = Astro.props;
 
 <script type="module">
   window.addEventListener("DOMContentLoaded", () => {
+    // --- LÓGICA DEL CARRITO (EXISTENTE) ---
     try {
       const btn = document.getElementById("add-to-cart-btn");
-      if (!btn) return;
-      const raw = btn.getAttribute("data-product") || "";
-      let product = {};
-      try {
-        product = JSON.parse(decodeURIComponent(raw));
-      } catch (e) {
-        product = {};
+      if (btn) {
+        const raw = btn.getAttribute("data-product") || "";
+        let product = {};
+        try {
+          product = JSON.parse(decodeURIComponent(raw));
+        } catch (e) {
+          product = {};
+        }
+        const payload = {
+          id: String(
+            product?.id ?? product?.product_id ?? product?.sku ?? "unknown"
+          ),
+          name: String(product.product_name ?? product.name ?? ""),
+          price: Number(product.price ?? 0),
+          image: product.image_url ?? product.image ?? "",
+          quantity: 1,
+        };
+        btn.addEventListener("click", function () {
+          if (window.cartApi && typeof window.cartApi.addItem === "function") {
+            window.cartApi.addItem(payload);
+            const original = btn.innerHTML;
+            btn.textContent = "Añadido";
+            setTimeout(() => {
+              btn.innerHTML = original;
+            }, 900);
+          } else {
+            alert("cartApi not available");
+          }
+        });
       }
-      const payload = {
-        id: String(
-          product?.id ?? product?.product_id ?? product?.sku ?? "unknown"
-        ),
-        name: String(product.product_name ?? product.name ?? ""),
-        price: Number(product.price ?? 0),
-        image: product.image_url ?? product.image ?? "",
-        quantity: 1,
-      };
-      btn.addEventListener("click", function () {
-        if (window.cartApi && typeof window.cartApi.addItem === "function") {
-          window.cartApi.addItem(payload);
-          // visual feedback
-          const original = btn.innerHTML;
-          btn.textContent = "Añadido";
-          setTimeout(() => {
-            btn.innerHTML = original;
-          }, 900);
+    } catch (e) {
+      alert(e);
+    }
+
+    // --- LÓGICA DE GALERÍA Y ZOOM ---
+    const mainImage = document.getElementById("main-image-container");
+    const zoomBtn = document.getElementById("zoom-btn");
+    const modal = document.getElementById("image-modal");
+    const modalImg = document.getElementById("modal-img");
+    const closeBtn = document.getElementById("modal-close");
+    const thumbs = document.querySelectorAll(".gallery-thumb");
+
+    // 1. Cambiar imagen principal al hacer click en miniaturas
+    thumbs.forEach((thumb) => {
+      thumb.addEventListener("click", () => {
+        const bg = thumb.style.backgroundImage;
+        if (mainImage) mainImage.style.backgroundImage = bg;
+      });
+    });
+
+    // 2. Abrir Modalf
+    debugger;
+    if (zoomBtn && mainImage && modal && modalImg) {
+      zoomBtn.addEventListener("click", () => {
+        const style = window.getComputedStyle(mainImage);
+        let bg = style.backgroundImage;
+        // Limpiar url("...") para obtener solo la URL
+        // bg suele ser: url("https://...")
+        if (bg.startsWith('url("')) {
+          bg = bg.slice(5, -2);
+        } else if (bg.startsWith("url('")) {
+          bg = bg.slice(5, -2);
+        } else if (bg.startsWith("url(")) {
+          bg = bg.slice(4, -1);
+        }
+
+        modalImg.src = bg;
+        modal.classList.remove("hidden");
+        // Pequeño delay para permitir que el navegador renderice antes de la transición de opacidad
+        requestAnimationFrame(() => {
+          modal.classList.remove("opacity-0");
+        });
+      });
+    }
+
+    // 3. Cerrar Modal
+    const closeModal = () => {
+      if (!modal) return;
+      modal.classList.add("opacity-0");
+      setTimeout(() => {
+        modal.classList.add("hidden");
+        resetZoom();
+      }, 300);
+    };
+
+    if (closeBtn) closeBtn.addEventListener("click", closeModal);
+    if (modal) {
+      modal.addEventListener("click", (e) => {
+        if (e.target === modal) closeModal();
+      });
+    }
+
+    // 4. Zoom en el Modal
+    let isZoomed = false;
+
+    function resetZoom() {
+      if (!modalImg) return;
+      isZoomed = false;
+      modalImg.style.transform = "scale(1)";
+      modalImg.style.transformOrigin = "center center";
+      modalImg.classList.remove("cursor-zoom-out");
+      modalImg.classList.add("cursor-zoom-in");
+    }
+
+    if (modalImg) {
+      modalImg.addEventListener("click", (e) => {
+        e.stopPropagation(); // Evitar cerrar el modal
+        if (isZoomed) {
+          resetZoom();
         } else {
-          console.warn("cartApi not available");
+          isZoomed = true;
+          modalImg.style.transform = "scale(2)";
+          modalImg.classList.add("cursor-zoom-out");
+          modalImg.classList.remove("cursor-zoom-in");
         }
       });
-    } catch (e) {
-      console.error(e);
+
+      modalImg.addEventListener("mousemove", (e) => {
+        if (!isZoomed) return;
+        const rect = modalImg.getBoundingClientRect();
+        // Calcular posición relativa del mouse dentro de la imagen
+        const x = (e.clientX - rect.left) / rect.width;
+        const y = (e.clientY - rect.top) / rect.height;
+
+        modalImg.style.transformOrigin = `${x * 100}% ${y * 100}%`;
+      });
     }
   });
 </script>
