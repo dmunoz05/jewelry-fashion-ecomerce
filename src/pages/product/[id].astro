@@ -130,11 +130,13 @@ const formatPrice = (value: any) => {
                   ) : (
                     <>
                       <li>
-                        Diámetro interno:{" "}
-                        {productSelected?.measure_diameter || ""}
+                        Diámetro interno: {productSelected?.diametro || ""}
                       </li>
-                      <li>Grosor: {productSelected?.gauge || ""}</li>
-                      <li>Material: {productSelected?.material || ""}</li>
+                      <li>Grosor: {productSelected?.grosor || ""}</li>
+                      <li>
+                        Descripción Material:{" "}
+                        {productSelected?.descripcion_material || ""}
+                      </li>
                     </>
                   )
                 }
@@ -143,17 +145,25 @@ const formatPrice = (value: any) => {
           </div>
 
           <!-- 💰 Precios -->
-          <div class="flex items-baseline gap-3">
-            <p class="text-white text-3xl font-bold">
-              {formatPrice(productSelected?.price)}
-            </p>
-
+          <div class="flex items-center align-center gap-3">
+            <!-- Si no tiene descuento -->
             {
-              productSelected?.compare_price ? (
-                <p class="text-gray-500 text-lg font-normal line-through">
-                  {formatPrice(productSelected.compare_price)}
+              productSelected?.discount ? (
+                <>
+                  <p class="text-white text-3xl font-bold">
+                    {formatPrice(
+                      productSelected?.price - productSelected?.discount
+                    )}
+                  </p>
+                  <p class="text-gray-500 text-lg font-normal line-through">
+                    {formatPrice(productSelected?.price)}
+                  </p>
+                </>
+              ) : (
+                <p class="text-white text-3xl font-bold">
+                  {formatPrice(productSelected?.price)}
                 </p>
-              ) : null
+              )
             }
 
             {
@@ -172,18 +182,18 @@ const formatPrice = (value: any) => {
               data-product={encodeURIComponent(
                 JSON.stringify(productSelected || {})
               )}
-              class="flex w-full items-center justify-center gap-x-2 rounded-lg bg-primary hover:bg-primary-darker px-4 py-3 text-white text-base font-bold transition-colors"
+              class="flex w-full items-center cursor-pointer justify-center gap-x-2 rounded-lg bg-primary hover:bg-primary-darker px-4 py-3 text-white text-base font-bold transition-colors"
             >
               <span class="material-symbols-outlined">add_shopping_cart</span>
               Agregar al carrito
             </button>
 
-            <button
-              class="flex w-full items-center justify-center gap-x-2 rounded-lg bg-bg-accent-dark hover:bg-bg-accent-darker border border-bg-accent-darker hover:border-bg-accent-dark px-4 py-3 text-white text-base font-bold transition-colors"
+            <!-- <button
+              class="flex w-full items-center cursor-pointer justify-center gap-x-2 rounded-lg bg-bg-accent-dark hover:bg-bg-accent-darker border border-bg-accent-darker hover:border-bg-accent-dark px-4 py-3 text-white text-base font-bold transition-colors"
             >
               <span class="material-symbols-outlined">bolt</span>
               Compra rápida
-            </button>
+            </button> -->
           </div>
         </div>
       </div>
