@@ -24,6 +24,15 @@ try {
 } catch (err) {
   console.error("Error loading categories:", err);
 }
+
+const formatPrice = (value: any) => {
+  const number = Number(value) || 0;
+  return number.toLocaleString("es-CO", {
+    style: "currency",
+    currency: "COP",
+    minimumFractionDigits: 0,
+  });
+};
 ---
 
 <div title="Jewelryfashion Oficial">
@@ -257,11 +266,11 @@ try {
               </div>
               <div class="flex items-center gap-2 flex-wrap">
                 <p class="text-white text-sm font-bold leading-normal">
-                  ${product.price}
+                  {formatPrice(product.price)}
                 </p>
                 {product.on_sale ? (
                   <p class="text-gray-500 text-xs font-normal leading-normal line-through">
-                    ${product.regular_price}
+                    {formatPrice(product.regular_price)}
                   </p>
                 ) : null}
               </div>
@@ -279,7 +288,7 @@ try {
                   Agregar
                 </button>
                 <a
-                  href={product.product_link + product.id}
+                  href={"/product/" + product.id}
                   class="hidden md:flex w-full items-center justify-center gap-x-2 rounded-lg bg-primary px-3 py-1.5 text-white text-xs font-bold leading-normal"
                 >
                   Ver
@@ -326,6 +335,40 @@ try {
       callToAction.addEventListener("click", () => {
         window.location.href = window.location.href + "catalog";
       });
+    }
+
+    try {
+      const allProducts = document.querySelectorAll(
+        'button[id^="add-to-cart-btn-"]'
+      );
+      allProducts.forEach((btn) => {
+        const raw = btn.getAttribute("data-product") || "";
+        let product = {};
+        try {
+          product = JSON.parse(decodeURIComponent(raw));
+        } catch (e) {
+          product = {};
+        }
+        const payload = {
+          id: String(
+            product?.id ?? product?.product_id ?? product?.sku ?? "unknown"
+          ),
+          name: String(product.product_name ?? product.name ?? ""),
+          price: Number(product.price ?? 0),
+          image: product.image_url ?? product.image ?? "",
+          quantity: 1,
+        };
+        btn.addEventListener("click", function () {
+          if (window.cartApi && typeof window.cartApi.addItem === "function") {
+            window.cartApi.addItem(payload);
+            btn.textContent = "Añadido";
+          } else {
+            console.warn("cartApi not available");
+          }
+        });
+      });
+    } catch (e) {
+      console.error(e);
     }
   });
 </script>
