@@ -45,6 +45,15 @@ try {
 }
 
 let nameCategory = categories.find((cat: any) => Number(cat.id) === Number(id));
+
+const formatPrice = (value: any) => {
+  const number = Number(value) || 0;
+  return number.toLocaleString("es-CO", {
+    style: "currency",
+    currency: "COP",
+    minimumFractionDigits: 0,
+  });
+};
 ---
 
 <BaseLayout>
@@ -181,12 +190,12 @@ let nameCategory = categories.find((cat: any) => Number(cat.id) === Number(id));
 
                 <div class="flex items-center gap-2 flex-wrap">
                   <p class="text-[#D4B8B8] text-sm font-bold">
-                    ${product.price}
+                    {formatPrice(product.price)}
                   </p>
 
                   {product.on_sale ? (
                     <p class="text-gray-600 text-xs line-through">
-                      ${product.regular_price}
+                      {formatPrice(product.regular_price)}
                     </p>
                   ) : null}
                 </div>
@@ -198,11 +207,11 @@ let nameCategory = categories.find((cat: any) => Number(cat.id) === Number(id));
                       JSON.stringify(product || {})
                     )}
                     class="flex cursor-pointer w-full items-center justify-center gap-x-2
-            rounded-xl border border-[#660000]/40 bg-[#3A0001] 
-            px-3 py-2 text-white text-xs font-bold tracking-wide
-            transition-all duration-300
-            hover:bg-[#660000] hover:border-[#990000]/80
-            active:scale-[0.97] active:bg-[#850000]"
+                    rounded-xl border border-[#660000]/40 bg-[#3A0001] 
+                    px-3 py-2 text-white text-xs font-bold tracking-wide
+                    transition-all duration-300
+                    hover:bg-[#660000] hover:border-[#990000]/80
+                    active:scale-[0.97] active:bg-[#850000]"
                   >
                     <span class="material-symbols-outlined text-base">
                       <svg

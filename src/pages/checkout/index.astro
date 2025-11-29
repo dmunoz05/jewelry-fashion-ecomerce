@@ -9,10 +9,11 @@ if (!user) {
 
 const userEmail = user.emailAddresses[0]?.emailAddress;
 const userName = user.fullName;
+const userNumber = user.phoneNumbers[0]?.phoneNumber.replace("+57", "");
 ---
 
 <BaseLayout>
-  <main class="grow px-4 pb-12">
+  <main class="grow px-4 pb-12 mt-20">
     <div class="pt-10 pb-16 text-text-light">
       <main class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
@@ -45,14 +46,14 @@ const userName = user.fullName;
 
               <button
                 id="checkout-clear"
-                class="w-full bg-red-500 hover:bg-red-600 transition-all text-white font-semibold py-2.5 rounded-lg shadow-sm"
+                class="w-full bg-red-500 hover:bg-red-600 cursor-pointer transition-all text-white font-semibold py-2.5 rounded-lg shadow-sm"
               >
                 Vaciar carrito
               </button>
 
               <button
                 id="checkout-pay"
-                class="w-full bg-gray-900 hover:bg-black transition-all text-white font-semibold py-2.5 rounded-lg shadow-md"
+                class="w-full bg-gray-900 hover:bg-black cursor-pointer transition-all text-white font-semibold py-2.5 rounded-lg shadow-md"
               >
                 Pagar
               </button>
@@ -108,6 +109,7 @@ const userName = user.fullName;
                 type="tel"
                 class="mt-2 w-full rounded-lg border border-gray-300 bg-gray-50 h-12 px-4 text-gray-900 focus:ring-2 focus:ring-gray-800 focus:border-gray-800 transition"
                 placeholder="3001234567"
+                value={userNumber}
                 required
               />
             </label>
@@ -116,7 +118,7 @@ const userName = user.fullName;
           <div class="pt-6">
             <button
               id="submit-pay"
-              class="w-full rounded-lg bg-black hover:bg-gray-900 text-white font-bold py-4 px-6 shadow-lg transition"
+              class="w-full rounded-lg bg-black cursor-pointer hover:bg-gray-900 text-white font-bold py-4 px-6 shadow-lg transition"
             >
               Pagar ahora
             </button>
@@ -139,35 +141,35 @@ const userName = user.fullName;
     >
       <div
         style="
-    position:relative;
-    width:90%;
-    max-width:850px;
-    height:80vh;
-    margin:5vh auto;
-    background:#ffffff;
-    border-radius:22px;
-    box-shadow:0 25px 60px rgba(0,0,0,0.4);
-    display:flex;
-    flex-direction:column;
-    padding:40px 35px;
-  "
+          position:relative;
+          width:90%;
+          max-width:850px;
+          height:80vh;
+          margin:5vh auto;
+          background:#ffffff;
+          border-radius:22px;
+          box-shadow:0 25px 60px rgba(0,0,0,0.4);
+          display:flex;
+          flex-direction:column;
+          padding:40px 35px;
+        "
       >
         <!-- Botón cerrar -->
         <button
           id="cerrarModalBtn"
           style="
-      position:absolute;
-      top:18px;
-      right:22px;
-      font-size:22px;
-      background:#f2f2f2;
-      border:none;
-      border-radius:50%;
-      width:40px;
-      height:40px;
-      cursor:pointer;
-      transition:0.3s;
-    "
+            position:absolute;
+            top:18px;
+            right:22px;
+            font-size:22px;
+            background:#f2f2f2;
+            border:none;
+            border-radius:50%;
+            width:40px;
+            height:40px;
+            cursor:pointer;
+            transition:0.3s;
+          "
           onmouseover="this.style.background='#e74c3c';this.style.color='white'"
           onmouseout="this.style.background='#f2f2f2';this.style.color='black'"
         >
@@ -188,15 +190,15 @@ const userName = user.fullName;
         <!-- Instrucción visual -->
         <div
           style="
-      background:#f8f9fa;
-      border:2px dashed #6c63ff;
-      padding:18px;
-      border-radius:14px;
-      text-align:center;
-      margin-bottom:30px;
-      font-size:16px;
-      color:#333;
-    "
+            background:#f8f9fa;
+            border:2px dashed #6c63ff;
+            padding:18px;
+            border-radius:14px;
+            text-align:center;
+            margin-bottom:30px;
+            font-size:16px;
+            color:#333;
+          "
         >
           👉 Presiona el botón morado para realizar tu pago de forma segura
         </div>
@@ -205,15 +207,28 @@ const userName = user.fullName;
         <div
           id="wompi-container"
           style="
-      flex:1;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-    "
+            flex:1;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+          "
         >
           <!-- AQUÍ SE INYECTA EL BOTÓN DE WOMPI -->
         </div>
       </div>
+    </div>
+    <!-- LOADER FULLSCREEN -->
+    <div
+      id="full-screen-loader"
+      class="hidden fixed inset-0 z-[10000] flex flex-col items-center justify-center bg-black/60 backdrop-blur-sm transition-opacity duration-300"
+    >
+      <div
+        class="w-16 h-16 border-4 border-white/30 border-t-white rounded-full animate-spin mb-4"
+      >
+      </div>
+      <p class="text-white text-xl font-semibold tracking-wide animate-pulse">
+        Cargando...
+      </p>
     </div>
 
     <script type="module">
@@ -228,7 +243,14 @@ const userName = user.fullName;
           "checkout-form-container"
         );
 
-        const money = (v) => "$" + Number(v || 0).toFixed(2);
+        const formatPrice = (value) => {
+          const number = Number(value) || 0;
+          return number.toLocaleString("es-CO", {
+            style: "currency",
+            currency: "COP",
+            minimumFractionDigits: 0,
+          });
+        };
 
         function renderCart() {
           if (!window.cartApi) {
@@ -240,9 +262,9 @@ const userName = user.fullName;
           const cart = window.cartApi.getCart() || [];
           const total = cart.reduce((s, i) => s + i.price * i.quantity, 0);
 
-          elTotal.textContent = money(total);
-          btnSubmit.textContent = `Pagar Ahora ${money(total)}`;
-          btnShowForm.textContent = `Pagar ${money(total)}`;
+          elTotal.textContent = formatPrice(total);
+          btnSubmit.textContent = `Pagar Ahora ${formatPrice(total)}`;
+          btnShowForm.textContent = `Pagar ${formatPrice(total)}`;
 
           if (!cart.length) {
             elItems.innerHTML =
@@ -265,11 +287,11 @@ const userName = user.fullName;
               <div class="flex-1">
                 <strong>${item.name}</strong>
                 <div class="text-sm">
-                  ${money(item.price)} x
-                  <input class="qty-input border px-1 w-14" data-id="${item.id}" value="${item.quantity}" />
+                  ${formatPrice(item.price)} x
+                  <input class="qty-input border-transparent px-1 text-sm w-14" disabled data-id="${item.id}" value="${item.quantity}" />
                 </div>
               </div>
-              <button data-id="${item.id}" class="remove-btn text-red-600">Eliminar</button>
+              <button data-id="${item.id}" class="remove-btn cursor-pointer text-red-600">Eliminar</button>
             `;
 
             elItems.appendChild(div);
@@ -317,6 +339,7 @@ const userName = user.fullName;
           phone
         ) {
           const modal = document.getElementById("modalPago");
+          const btnClose = document.getElementById("cerrarModalBtn");
           const container = document.getElementById("wompi-container");
 
           modal.style.display = "flex";
@@ -353,6 +376,14 @@ const userName = user.fullName;
           );
 
           container.appendChild(script);
+        }
+
+        function loadEventCloseModal() {
+          const btnClose = document.getElementById("cerrarModalBtn");
+          btnClose.onclick = () => {
+            const modal = document.getElementById("modalPago");
+            modal.style.display = "none";
+          };
         }
 
         function initialPayment() {
@@ -392,10 +423,17 @@ const userName = user.fullName;
                 name,
                 phone
               );
+              loadEventCloseModal();
+              document
+                .getElementById("full-screen-loader")
+                .classList.add("hidden");
             });
         }
 
         btnSubmit.onclick = () => {
+          document
+            .getElementById("full-screen-loader")
+            .classList.remove("hidden");
           if (!window.cartApi.getCount()) return alert("Carrito vacío");
           initialPayment();
         };
