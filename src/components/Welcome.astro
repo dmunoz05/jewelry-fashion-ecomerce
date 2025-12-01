@@ -130,23 +130,23 @@ try {
     <div class="@container">
       <div class="@[480px]:p-4">
         <div class="relative min-h-[40vh] overflow-hidden @[480px]:rounded-xl">
-          <div class="absolute inset-0 flex">
+          <div class="absolute inset-0 flex transition-transform duration-700">
             <div
               class="h-full w-full flex-shrink-0 bg-cover bg-center bg-no-repeat"
               data-alt="Close-up of a person with elegant ear piercings wearing gold jewelry."
-              style='background-image: linear-gradient(rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.5) 100%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuD47kH2z--Fmp1lx-r_EgQRB4SY_8Ang7hPmcP3cntoc2XHkNaCTpcrtZx3hrHndROIFLGbE50-ZDHcMzQYty45K62QwkZKbja1ATbus1An9rQRa7N0JUigK78rKxWdzdKQCEA4EC58eQWmGTxEDgKO8JryFDu7wN96ghG-YTOMjppLgpkuyq69WFWKM2qZ6_tNHFKtZhfSskFgptHaKR7IR33kDeBtOUELTKaVXBWNbxY46sMcjui9Jy-1z5Nj1BcawDDUEc-k3t4");'
+              style='background-image: linear-gradient(rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.5) 100%), url("/src/assets/Copia\ de\ 1\ 6.png");'
             >
             </div>
             <div
               class="h-full w-full flex-shrink-0 bg-cover bg-center bg-no-repeat"
               data-alt="A luxurious gold piercing with intricate details against a dark backdrop."
-              style='background-image: linear-gradient(rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.5) 100%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuCLxt4XNb3Fm6wv_Lp04a07yOgeePFY3oCg3G1qrDfw-ZrlnuwU0LUZReftrzz8zK7yMX6OfB02nha0lxS4vrrKcnuUbHJKFW5NGJ0lsH_Uj7nm_0ZVgx4wLPHutd_n2L_JxvicshscjHvWwoByduTT44sCQ3k3e-m1YuywC60hD8aFKwXBoWeDjMUdrELD5-Uv-JpfrnYUUVifBoe8p7j3DexpJ6GYRtYpczlVPqiVQ5Zesr04frrtuWEe_tUUp8aCH9FZ1X1eKpg");'
+              style='background-image: linear-gradient(rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.5) 100%), url("/src/assets/2.jpg");'
             >
             </div>
             <div
               class="h-full w-full flex-shrink-0 bg-cover bg-center bg-no-repeat"
               data-alt="A person showcasing a stylish nose piercing."
-              style='background-image: linear-gradient(rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.5) 100%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuDczgim3KXYTXwBTobhB_kGoGH2o28Gu35BkXss_c6VQhODWQao-HqolVqBZJ425L3aTvYnK3HUv35mC5wZ9sB3rRmhQTc8YFD7NO7rVM0OcfUVyyjed9vQACv3D7SRWkO2sisD7wG29qzSOIXSexCmPs-mzOvSUsuAmY98p6UBf9J1CfCi2zpkFsDEngU2xlvXyQyDNthpf7TsPdPhhc5xi6Y0kXNsUcU6ygLC0v933gLHJjga_ESzph3DamE4-xmNQDKmc4EXh8o");'
+              style='background-image: linear-gradient(rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.5) 100%), url("/src/assets/3.jpg");'
             >
             </div>
           </div>
@@ -184,12 +184,13 @@ try {
             ></button>
           </div>
           <button
-            class="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-black/30 p-2 text-white transition-colors hover:bg-black/50 @[480px]:left-4"
+            class="carousel-prev absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-black/30 p-2 text-white transition-colors hover:bg-black/50 @[480px]:left-4"
           >
             <span class="material-symbols-outlined">chevron_left</span>
           </button>
+
           <button
-            class="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-black/30 p-2 text-white transition-colors hover:bg-black/50 @[480px]:right-4"
+            class="carousel-next absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-black/30 p-2 text-white transition-colors hover:bg-black/50 @[480px]:right-4"
           >
             <span class="material-symbols-outlined">chevron_right</span>
           </button>
@@ -210,15 +211,15 @@ try {
           <p
             class="text-base font-normal leading-normal text-gray-600 dark:text-[#b89d9d]"
           >
-            En todos los pedidos superiores a 50€
+            En todos los pedidos superiores a 80.000 COL
           </p>
         </div>
         <a
           class="flex items-center gap-2 text-sm font-bold leading-normal tracking-[0.015em] text-primary hover:underline dark:text-white"
-          href="#"
+          href=`/catalog/`
         >
-          Saber más
-          <span class="material-symbols-outlined text-lg">arrow_forward</span>
+          Productos de calidad
+          
         </a>
       </div>
     </div>
@@ -234,57 +235,90 @@ try {
     <div class="grid grid-cols-2 gap-4 p-4 md:grid-cols-4">
       {
         products.map((product: any) => (
-          <div class="flex flex-col gap-3">
+          <div class="flex flex-col gap-4 group">
             <div
-              class="relative w-full bg-center bg-no-repeat aspect-square bg-cover rounded-xl bg-[#2B0001]"
-              data-alt={product.product_name}
-              style={`background-image: url("${product.image_url}");`}
+              class="relative w-full aspect-square rounded-2xl overflow-hidden 
+        bg-[#2B0001] shadow-xl shadow-black/30 border border-[#4f0a0a]/40
+        transition-all duration-300 group-hover:border-[#850000]/70"
             >
+              <div
+                class="w-full h-full bg-center bg-cover 
+          transition-transform duration-300 ease-out group-hover:scale-110"
+                style={`background-image: url('${product.image_url}');`}
+                data-alt={product.product_name}
+              />
+
               {product.on_sale ? (
-                <div class="absolute top-2 left-2 bg-primary text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                <div
+                  class="absolute top-2 left-2 
+          bg-[#850000] text-white text-[10px] font-bold px-2 py-0.5 rounded-full 
+          shadow-md shadow-black/40 border border-white/10"
+                >
                   OFERTA
                 </div>
               ) : null}
             </div>
-            <div class="flex flex-col gap-2">
-              <div>
-                <p class="text-white text-sm font-semibold leading-tight">
+
+            <div>
+              <div class="flex items-center gap-2 flex justify-between">
+                <p class="text-white text-xl font-semibold tracking-wide">
                   {product.product_name}
                 </p>
-                <p class="text-gray-400 text-xs font-normal leading-normal">
-                  {product.material}
-                </p>
-              </div>
-              <div class="flex items-center gap-2 flex-wrap">
-                <p class="text-white text-sm font-bold leading-normal">
-                  ${product.price}
-                </p>
-                {product.on_sale ? (
-                  <p class="text-gray-500 text-xs font-normal leading-normal line-through">
-                    ${product.regular_price}
-                  </p>
-                ) : null}
-              </div>
-              <div class="flex flex-col gap-2">
-                <button
-                  id={`add-to-cart-btn-${product.id}`}
-                  data-product={encodeURIComponent(
-                    JSON.stringify(product || {})
-                  )}
-                  class="flex cursor-pointer w-full items-center justify-center gap-x-2 rounded-lg bg-[#480001] px-3 py-1.5 text-white text-xs font-bold leading-normal"
-                >
-                  <span class="material-symbols-outlined text-base">
-                    add_shopping_cart
-                  </span>
-                  Agregar
-                </button>
+
                 <a
-                  href={product.product_link + product.id}
-                  class="hidden md:flex w-full items-center justify-center gap-x-2 rounded-lg bg-primary px-3 py-1.5 text-white text-xs font-bold leading-normal"
+                  href={"/product/" + product.id}
+                  class="hidden md:flex items-center justify-center 
+      rounded-lg border border-[#550000]/40 bg-[#4A0001]
+      px-3 py-1.5 text-[11px] font-bold text-white tracking-wide
+      transition-all duration-300
+      hover:bg-[#850000] hover:border-[#A40000]/80
+      active:scale-[0.97]"
                 >
                   Ver
                 </a>
               </div>
+
+              <p class="text-gray-400 text-sm">{product.material}</p>
+            </div>
+
+            <div class="flex items-center gap-2 flex-wrap">
+              <p class="text-[#D4B8B8] text-xl font-bold">${product.price}</p>
+
+              {product.on_sale ? (
+                <p class="text-gray-600 text-xs line-through">
+                  ${product.regular_price}
+                </p>
+              ) : null}
+            </div>
+
+            <div class="flex flex-col gap-2 mt-1">
+              <button
+                id={`add-to-cart-btn-${product.id}`}
+                data-product={encodeURIComponent(JSON.stringify(product || {}))}
+                class="flex cursor-pointer w-full items-center justify-center gap-x-2
+            rounded-xl border border-[#660000]/40 bg-[#3A0001] 
+            px-3 py-2 text-white text-xs font-bold tracking-wide
+            transition-all duration-300
+            hover:bg-[#660000] hover:border-[#990000]/80
+            active:scale-[0.97] active:bg-[#850000]"
+              >
+                <span class="material-symbols-outlined text-base">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    class="icon icon-tabler icons-tabler-filled icon-tabler-garden-cart"
+                  >
+                    <>
+                      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                      <path d="M3.324 3a2 2 0 0 1 1.855 1.258l1.097 2.742h14.724a1 1 0 0 1 .94 1.341l-.046 .106l-2.934 5.871a3.5 3.5 0 1 1 -4.96 3.182l.005 -.192a3.5 3.5 0 0 1 .499 -1.618l-2.446 -.258l-3.446 4.75a2 2 0 0 1 -2.08 .762l-.154 -.044a2 2 0 0 1 -1.378 -1.9v-9.804l-1.679 -4.196h-1.321a1 1 0 0 1 -.993 -.883l-.007 -.117a1 1 0 0 1 1 -1zm14.176 13a1.5 1.5 0 1 0 0 3a1.5 1.5 0 0 0 0 -3m-10.5 -2.498l-.002 5.498l2.783 -3.833a5 5 0 0 1 -2.614 -1.474z" />
+                    </>
+                  </svg>{" "}
+                </span>
+                Agregar
+              </button>
             </div>
           </div>
         ))
@@ -318,7 +352,11 @@ try {
     </div>
   </main>
 </div>
-
+<style>
+  .carousel-track {
+    transition: transform 0.6s ease;
+  }
+</style>
 <script>
   window.addEventListener("DOMContentLoaded", () => {
     const callToAction = document.getElementById("callToAction");
@@ -328,6 +366,62 @@ try {
       });
     }
   });
+  //carrousel de home-------------------------
+
+  // === CARROUSEL HOME ===
+
+  const track = document.querySelector(
+    ".relative .absolute.inset-0.flex.transition-transform"
+  );
+
+  const slides = Array.from(track.children);
+  const dots = document.querySelectorAll(".bottom-4 button");
+
+  const btnPrev = document.querySelector(".carousel-prev");
+  const btnNext = document.querySelector(".carousel-next");
+
+  let currentIndex = 0;
+
+  function updateCarousel() {
+    track.style.transform = `translateX(-${currentIndex * 100}%)`;
+
+    dots.forEach((dot, i) => {
+      dot.style.opacity = i === currentIndex ? "0.9" : "0.4";
+    });
+  }
+
+  btnNext.addEventListener("click", () => {
+    currentIndex = (currentIndex + 1) % slides.length;
+    updateCarousel();
+  });
+
+  btnPrev.addEventListener("click", () => {
+    currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+    updateCarousel();
+  });
+
+  dots.forEach((dot, i) => {
+    dot.addEventListener("click", () => {
+      currentIndex = i;
+      updateCarousel();
+    });
+  });
+
+  updateCarousel();
+
+  setInterval(() => {
+    currentIndex = (currentIndex + 1) % slides.length;
+    updateCarousel();
+  }, 5000);
+
+  // Inicializar estado
+  updateCarousel();
+
+  // Auto-slide
+  setInterval(() => {
+    currentIndex = (currentIndex + 1) % slides.length;
+    updateCarousel();
+  }, 3000);
 </script>
 
 <!-- <script>

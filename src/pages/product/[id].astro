@@ -85,161 +85,163 @@ export async function getStaticPaths() {
 const { id } = Astro.props;
 --- -->
 <BaseLayout>
-  <div
-    class="relative flex min-h-screen w-full flex-col bg-[#000000] overflow-x-hidden"
-  >
-    <main class="flex-grow container mx-auto px-4 py-8">
-      <div class="grid grid-cols-1 md:grid-cols-2 md:gap-12">
-        <!-- Galería dinámica -->
-        <div class="flex flex-col gap-4">
+  <div class="relative flex min-h-screen w-full flex-col bg-[#000000] overflow-x-hidden">
+
+    <main class="flex-grow container mx-auto px-4 py-40 max-w-5xl"> 
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10 items-start">
+
+        <!-- 🖼️ Galería -->
+        <div class="flex flex-col gap-3">
+
           <!-- Imagen principal -->
           <div
-            class="relative w-full aspect-square bg-center bg-no-repeat bg-cover rounded-xl bg-bg-accent-darker"
+            class="relative w-full aspect-square rounded-xl bg-cover bg-center bg-no-repeat shadow-lg border border-white/10"
             style={`background-image: url('${productSelected?.image_url || ""}')`}
           >
-            <button
-              class="absolute top-3 right-3 bg-black/50 p-2 rounded-full text-white hover:bg-black/75 transition-colors"
-            >
-              <span class="material-symbols-outlined">zoom_in</span>
+            <button class="absolute top-3 right-3 bg-black/60 p-1.5 rounded-full text-white hover:bg-black/75 transition">
+              <span class="material-symbols-outlined text-base">zoom_in</span>
             </button>
           </div>
 
-          <!-- Miniaturas dinámicas (si la API las trae) -->
-          {
-            productSelected?.gallery?.length > 0 ? (
-              <div class="grid grid-cols-4 gap-3">
-                {productSelected.gallery.map((img: string) => (
-                  <div
-                    class="w-full aspect-square bg-center bg-no-repeat bg-cover rounded-lg bg-bg-accent-darker cursor-pointer hover:opacity-80 transition"
-                    style={`background-image: url('${img}')`}
-                  />
-                ))}
-              </div>
-            ) : null
-          }
+          {/* Miniaturas */}
+          {productSelected?.gallery?.length > 0 && (
+            <div class="grid grid-cols-4 gap-2">
+              {productSelected.gallery.map((img: string) => (
+                <div
+                  class="
+                    w-full aspect-square rounded-lg cursor-pointer bg-cover bg-center bg-no-repeat
+                    border border-white/10 hover:border-primary transition-all
+                  "
+                  style={`background-image: url('${img}')`}
+                />
+              ))}
+            </div>
+          )}
         </div>
 
-        <!-- 📝 Información del producto -->
-        <div class="flex flex-col gap-6 mt-8 md:mt-0">
-          <div class="flex flex-col gap-2 border-b border-bg-accent-dark pb-6">
-            <p class="text-gray-400 text-sm uppercase tracking-wider">
+        <!-- 📄 Información del producto -->
+        <div class="flex flex-col gap-5">
+
+          <!-- Título -->
+          <div class="flex flex-col gap-1.5 border-b border-white/10 pb-4">
+            <p class="text-gray-400 text-xs uppercase tracking-widest">
               {productSelected?.material || "Material desconocido"}
             </p>
 
-            <h1
-              class="text-white text-3xl md:text-4xl font-bold tracking-tight"
-            >
+            <h1 class="text-white text-2xl md:text-3xl font-semibold leading-tight">
               {productSelected?.product_name || "Producto no encontrado"}
             </h1>
           </div>
 
-          <div class="flex flex-col gap-4">
-            <div class="text-gray-300 text-sm space-y-3 leading-relaxed">
-              <p>
-                {
-                  productSelected?.description ||
-                    "No hay descripción disponible para este producto."
-                }
-              </p>
-            </div>
-
-            <!-- 📏 Medidas -->
-            <div>
-              <h3 class="text-white font-semibold mb-2">Medidas:</h3>
-
-              <ul class="list-disc list-inside text-gray-400 text-sm space-y-1">
-                {
-                  productSelected?.measures?.length ? (
-                    productSelected.measures.map((m: any) => <li>{m}</li>)
-                  ) : (
-                    <>
-                      <li>
-                        Diámetro interno:{" "}
-                        {productSelected?.measure_diameter || "—"}
-                      </li>
-                      <li>Grosor: {productSelected?.gauge || "—"}</li>
-                      <li>Material: {productSelected?.material || "—"}</li>
-                    </>
-                  )
-                }
-              </ul>
-            </div>
+          <!-- Descripción -->
+          <div class="text-gray-300 text-sm leading-relaxed">
+            <p>
+              {productSelected?.description ||
+                "No hay descripción disponible para este producto."}
+            </p>
           </div>
 
-          <!-- 💰 Precios -->
-          <div class="flex items-baseline gap-3">
-            <p class="text-white text-3xl font-bold">
-              ${productSelected?.price ?? "—"}
-            </p>
+          <!-- 📐 Medidas -->
+          <div>
+            <h3 class="text-white font-medium mb-2">Medidas</h3>
+            <ul class="space-y-1 text-gray-400 text-sm">
+              {productSelected?.measures?.length ? (
+                productSelected.measures.map((m: any) => (
+                  <li class="flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-xs">check_small</span>
+                    {m}
+                  </li>
+                ))
+              ) : (
+                <>
+                  <li>Diámetro interno: {productSelected?.measure_diameter || "—"}</li>
+                  <li>Grosor: {productSelected?.gauge || "—"}</li>
+                  <li>Material: {productSelected?.material || "—"}</li>
+                </>
+              )}
+            </ul>
+          </div>
 
-            {
-              productSelected?.compare_price ? (
-                <p class="text-gray-500 text-lg font-normal line-through">
-                  ${productSelected.compare_price}
-                </p>
-              ) : null
-            }
+          <!-- 💲 Precio -->
+          <div class="flex items-center gap-2">
+            <p class="text-white text-2xl font-bold">${productSelected?.price ?? "—"}</p>
 
-            {
-              productSelected?.discount ? (
-                <span class="bg-primary text-white text-xs font-bold px-2.5 py-1 rounded-full">
-                  {productSelected.discount}% OFF
-                </span>
-              ) : null
-            }
+            {productSelected?.compare_price && (
+              <p class="text-gray-500 line-through text-sm">
+                ${productSelected.compare_price}
+              </p>
+            )}
+
+            {productSelected?.discount && (
+              <span class="bg-primary text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                {productSelected.discount}% OFF
+              </span>
+            )}
           </div>
 
           <!-- 🛒 Botones -->
-          <div class="flex flex-col gap-3 mt-2">
+          <div class="flex flex-col gap-2.5">
+
             <button
               id="add-to-cart-btn"
-              data-product={encodeURIComponent(
-                JSON.stringify(productSelected || {})
-              )}
-              class="flex w-full items-center justify-center gap-x-2 rounded-lg bg-primary hover:bg-primary-darker px-4 py-3 text-white text-base font-bold transition-colors"
+              data-product={encodeURIComponent(JSON.stringify(productSelected || {}))}
+              class="
+                flex items-center justify-center gap-2 w-full py-3 rounded-lg
+                bg-primary text-white font-semibold text-sm
+                hover:bg-primary/90 transition-all
+              "
             >
-              <span class="material-symbols-outlined">add_shopping_cart</span>
+              <span class="material-symbols-outlined text-base">add_shopping_cart</span>
               Agregar al carrito
             </button>
 
             <button
-              class="flex w-full items-center justify-center gap-x-2 rounded-lg bg-bg-accent-dark hover:bg-bg-accent-darker border border-bg-accent-darker hover:border-bg-accent-dark px-4 py-3 text-white text-base font-bold transition-colors"
+              class="
+                flex items-center justify-center gap-2 w-full py-3 rounded-lg
+                bg-white/5 border border-white/10 text-white font-medium text-sm
+                hover:bg-white/10 transition-all
+              "
             >
-              <span class="material-symbols-outlined">bolt</span>
+              <span class="material-symbols-outlined text-base">bolt</span>
               Compra rápida
             </button>
+
           </div>
         </div>
       </div>
-      <div class="border-t border-bg-accent-dark pt-8 mt-12">
-        <h2 class="text-white text-xl font-bold mb-4">
-          Productos Relacionados
-        </h2>
+
+      <!-- 🔗 Productos relacionados -->
+      <div class="border-t border-white/10 pt-6 mt-10 max-w-5xl mx-auto">
+        <h2 class="text-white text-xl font-bold mb-4">Productos Relacionados</h2>
+
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {
-            productsRelationShip.map((product: any) => (
-              <div class="flex flex-col gap-3">
-                <div
-                  class="relative w-full bg-center bg-no-repeat aspect-square bg-cover rounded-xl bg-bg-accent-darker"
-                  style={`background-image: url("${product.image_url}");`}
-                />
-                <div class="flex flex-col gap-1">
-                  <p class="text-white text-sm font-semibold leading-tight">
-                    {product.name}
-                  </p>
-                  <p class="text-gray-400 text-xs">{product.material}</p>
-                  <p class="text-white text-sm font-bold mt-1">
-                    ${product.price}
-                  </p>
-                </div>
+          {productsRelationShip.map((product: any) => (
+            <div class="flex flex-col gap-2 group">
+              <div
+                class="
+                  w-full aspect-square rounded-lg bg-cover bg-center bg-no-repeat
+                  border border-white/10 group-hover:border-primary transition-all
+                "
+                style={`background-image: url("${product.image_url}")`}
+              />
+
+              <div class="flex flex-col gap-0.5">
+                <p class="text-white text-sm font-medium group-hover:text-primary transition">
+                  {product.name}
+                </p>
+                <p class="text-gray-400 text-xs">{product.material}</p>
+                <p class="text-white font-semibold text-sm">${product.price}</p>
               </div>
-            ))
-          }
+            </div>
+          ))}
         </div>
       </div>
+
     </main>
+
   </div>
 </BaseLayout>
+
 
 <style>
   .material-symbols-outlined {

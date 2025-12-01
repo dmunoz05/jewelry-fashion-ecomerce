@@ -171,69 +171,68 @@ let nameCategory = categories.find((cat: any) => Number(cat.id) === Number(id));
                 ) : null}
               </div>
 
-              <div class="flex flex-col gap-2 px-1 select-none">
-                <div>
-                  <p class="text-white text-sm font-semibold tracking-wide">
+              <div>
+                <div class="flex items-center gap-2 flex justify-between">
+                  <p class="text-white text-xl font-semibold tracking-wide">
                     {product.product_name}
                   </p>
-                  <p class="text-gray-400 text-xs">{product.material}</p>
+
+                  <a
+                    href={"/product/" + product.id}
+                    class="hidden md:flex items-center justify-center 
+      rounded-lg border border-[#550000]/40 bg-[#4A0001]
+      px-3 py-1.5 text-[11px] font-bold text-white tracking-wide
+      transition-all duration-300
+      hover:bg-[#850000] hover:border-[#A40000]/80
+      active:scale-[0.97]"
+                  >
+                    Ver
+                  </a>
                 </div>
 
-                <div class="flex items-center gap-2 flex-wrap">
-                  <p class="text-[#D4B8B8] text-sm font-bold">
-                    ${product.price}
+                <p class="text-gray-400 text-sm">{product.material}</p>
+              </div>
+
+              <div class="flex items-center gap-2 flex-wrap">
+                <p class="text-[#D4B8B8] text-xl font-bold">${product.price}</p>
+
+                {product.on_sale ? (
+                  <p class="text-gray-600 text-xs line-through">
+                    ${product.regular_price}
                   </p>
+                ) : null}
+              </div>
 
-                  {product.on_sale ? (
-                    <p class="text-gray-600 text-xs line-through">
-                      ${product.regular_price}
-                    </p>
-                  ) : null}
-                </div>
-
-                <div class="flex flex-col gap-2 mt-1">
-                  <button
-                    id={`add-to-cart-btn-${product.id}`}
-                    data-product={encodeURIComponent(
-                      JSON.stringify(product || {})
-                    )}
-                    class="flex cursor-pointer w-full items-center justify-center gap-x-2
+              <div class="flex flex-col gap-2 mt-1">
+                <button
+                  id={`add-to-cart-btn-${product.id}`}
+                  data-product={encodeURIComponent(
+                    JSON.stringify(product || {})
+                  )}
+                  class="flex cursor-pointer w-full items-center justify-center gap-x-2
             rounded-xl border border-[#660000]/40 bg-[#3A0001] 
             px-3 py-2 text-white text-xs font-bold tracking-wide
             transition-all duration-300
             hover:bg-[#660000] hover:border-[#990000]/80
             active:scale-[0.97] active:bg-[#850000]"
-                  >
-                    <span class="material-symbols-outlined text-base">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                        class="icon icon-tabler icons-tabler-filled icon-tabler-garden-cart"
-                      >
-                        <>
-                          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                          <path d="M3.324 3a2 2 0 0 1 1.855 1.258l1.097 2.742h14.724a1 1 0 0 1 .94 1.341l-.046 .106l-2.934 5.871a3.5 3.5 0 1 1 -4.96 3.182l.005 -.192a3.5 3.5 0 0 1 .499 -1.618l-2.446 -.258l-3.446 4.75a2 2 0 0 1 -2.08 .762l-.154 -.044a2 2 0 0 1 -1.378 -1.9v-9.804l-1.679 -4.196h-1.321a1 1 0 0 1 -.993 -.883l-.007 -.117a1 1 0 0 1 1 -1zm14.176 13a1.5 1.5 0 1 0 0 3a1.5 1.5 0 0 0 0 -3m-10.5 -2.498l-.002 5.498l2.783 -3.833a5 5 0 0 1 -2.614 -1.474z" />
-                        </>
-                      </svg>{" "}
-                    </span>
-                    Agregar
-                  </button>
-
-                  <a
-                    href={"/product/" + product.id}
-                    class="hidden md:flex w-full items-center justify-center gap-x-2 
-                      rounded-xl border border-[#550000]/40 bg-[#4A0001]
-                      px-3 py-2 text-xs font-bold text-white tracking-wide
-                      transition-all duration-300
-                      hover:bg-[#850000] hover:border-[#A40000]/80
-                      active:scale-[0.97]"
-                  >
-                    Ver producto
-                  </a>
-                </div>
+                >
+                  <span class="material-symbols-outlined text-base">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      class="icon icon-tabler icons-tabler-filled icon-tabler-garden-cart"
+                    >
+                      <>
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M3.324 3a2 2 0 0 1 1.855 1.258l1.097 2.742h14.724a1 1 0 0 1 .94 1.341l-.046 .106l-2.934 5.871a3.5 3.5 0 1 1 -4.96 3.182l.005 -.192a3.5 3.5 0 0 1 .499 -1.618l-2.446 -.258l-3.446 4.75a2 2 0 0 1 -2.08 .762l-.154 -.044a2 2 0 0 1 -1.378 -1.9v-9.804l-1.679 -4.196h-1.321a1 1 0 0 1 -.993 -.883l-.007 -.117a1 1 0 0 1 1 -1zm14.176 13a1.5 1.5 0 1 0 0 3a1.5 1.5 0 0 0 0 -3m-10.5 -2.498l-.002 5.498l2.783 -3.833a5 5 0 0 1 -2.614 -1.474z" />
+                      </>
+                    </svg>{" "}
+                  </span>
+                  Agregar
+                </button>
               </div>
             </div>
           ))
