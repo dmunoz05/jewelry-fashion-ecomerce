@@ -180,12 +180,23 @@ const formatPrice = (value: any) => {
                 ) : null}
               </div>
 
-              <div class="flex flex-col gap-2 px-1 select-none">
-                <div>
-                  <p class="text-white text-sm font-semibold tracking-wide">
+              <div>
+                <div class="flex items-center gap-2 flex justify-between">
+                  <p class="text-white text-xl font-semibold tracking-wide">
                     {product.product_name}
                   </p>
-                  <p class="text-gray-400 text-xs">{product.material}</p>
+
+                  <a
+                    href={"/product/" + product.id}
+                    class="hidden md:flex items-center justify-center 
+      rounded-lg border border-[#550000]/40 bg-[#4A0001]
+      px-3 py-1.5 text-[11px] font-bold text-white tracking-wide
+      transition-all duration-300
+      hover:bg-[#850000] hover:border-[#A40000]/80
+      active:scale-[0.97]"
+                  >
+                    Ver
+                  </a>
                 </div>
 
                 <div class="flex items-center gap-2 flex-wrap">
