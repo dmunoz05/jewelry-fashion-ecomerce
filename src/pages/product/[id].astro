@@ -26,6 +26,7 @@ const { id } = Astro.params;
 let productSelected = null;
 let productsRelationShip = [];
 
+
 try {
   const response = await fetch(
     `https://admin.jewelryfashionoficial.com/wp-json/custom-api/v1/api-json/v1/product_exists/${id}`
@@ -95,29 +96,27 @@ const formatPrice = (value: any) => {
           }
         </div>
 
-        <!-- 📝 Información del producto -->
-        <div class="flex flex-col gap-6 mt-8 md:mt-0">
-          <div class="flex flex-col gap-2 border-b border-bg-accent-dark pb-6">
-            <p class="text-gray-400 text-sm uppercase tracking-wider">
+        <!-- 📄 Información del producto -->
+        <div class="flex flex-col gap-5">
+
+          <!-- Título -->
+          <div class="flex flex-col gap-1.5 border-b border-white/10 pb-4">
+            <p class="text-gray-400 text-xs uppercase tracking-widest">
               {productSelected?.material || "Material desconocido"}
             </p>
 
-            <h1
-              class="text-white text-3xl md:text-4xl font-bold tracking-tight"
-            >
+            <h1 class="text-white text-2xl md:text-3xl font-semibold leading-tight">
               {productSelected?.product_name || "Producto no encontrado"}
             </h1>
           </div>
 
-          <div class="flex flex-col gap-4">
-            <div class="text-gray-300 text-sm space-y-3 leading-relaxed">
-              <p>
-                {
-                  productSelected?.description ||
-                    "No hay descripción disponible para este producto."
-                }
-              </p>
-            </div>
+          <!-- Descripción -->
+          <div class="text-gray-300 text-sm leading-relaxed">
+            <p>
+              {productSelected?.description ||
+                "No hay descripción disponible para este producto."}
+            </p>
+          </div>
 
             <!-- 📏 Medidas -->
             <div>
@@ -176,7 +175,8 @@ const formatPrice = (value: any) => {
           </div>
 
           <!-- 🛒 Botones -->
-          <div class="flex flex-col gap-3 mt-2">
+          <div class="flex flex-col gap-2.5">
+
             <button
               id="add-to-cart-btn"
               data-product={encodeURIComponent(
@@ -184,23 +184,29 @@ const formatPrice = (value: any) => {
               )}
               class="flex w-full items-center cursor-pointer justify-center gap-x-2 rounded-lg bg-primary hover:bg-primary-darker px-4 py-3 text-white text-base font-bold transition-colors"
             >
-              <span class="material-symbols-outlined">add_shopping_cart</span>
+              <span class="material-symbols-outlined text-base"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-shopping-bag-plus"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12.5 21h-3.926a3 3 0 0 1 -2.965 -2.544l-1.255 -8.152a2 2 0 0 1 1.977 -2.304h11.339a2 2 0 0 1 1.977 2.304l-.263 1.708" /><path d="M16 19h6" /><path d="M19 16v6" /><path d="M9 11v-5a3 3 0 0 1 6 0v5" /></svg></span>
               Agregar al carrito
             </button>
 
-            <!-- <button
-              class="flex w-full items-center cursor-pointer justify-center gap-x-2 rounded-lg bg-bg-accent-dark hover:bg-bg-accent-darker border border-bg-accent-darker hover:border-bg-accent-dark px-4 py-3 text-white text-base font-bold transition-colors"
+            <button
+              class="
+                flex items-center justify-center gap-2 w-full py-3 rounded-lg
+                bg-white/5 border border-white/10 text-white font-medium text-sm
+                hover:bg-white/10 transition-all
+              "
             >
-              <span class="material-symbols-outlined">bolt</span>
+              <span class="material-symbols-outlined text-base"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-bolt"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M13 3l0 7l6 0l-8 11l0 -7l-6 0l8 -11" /></svg></span>
               Compra rápida
-            </button> -->
+            </button>
+
           </div>
         </div>
       </div>
-      <div class="border-t border-bg-accent-dark pt-8 mt-12">
-        <h2 class="text-white text-xl font-bold mb-4">
-          Productos Relacionados
-        </h2>
+
+      <!-- 🔗 Productos relacionados -->
+      <div class="border-t border-white/10 pt-6 mt-10 max-w-5xl mx-auto">
+        <h2 class="text-white text-xl font-bold mb-4">Productos Relacionados</h2>
+
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
           {
             productsRelationShip.map((product: any) => (
@@ -219,10 +225,11 @@ const formatPrice = (value: any) => {
                   </p>
                 </div>
               </div>
-            ))
-          }
+            </div>
+          ))}
         </div>
       </div>
+
     </main>
 
     <!-- MODAL DE ZOOM -->
@@ -250,6 +257,7 @@ const formatPrice = (value: any) => {
     </div>
   </div>
 </BaseLayout>
+
 
 <style>
   .material-symbols-outlined {
