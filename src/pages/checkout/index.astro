@@ -441,14 +441,11 @@ import BaseLayout from "../../layouts/Layout.astro";
             price: item.price,
           }));
 
-          fetch(
-            "https://admin.jewelryfashionoficial.com/wp-json/custom-api/v1/create-payment",
-            {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ name, email, phone, products }),
-            }
-          )
+          fetch(`${import.meta.env.PUBLIC_API_URL}/create-payment`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name, email, phone, products }),
+          })
             .then((res) => res.json())
             .then((data) => {
               if (!data.success) {
