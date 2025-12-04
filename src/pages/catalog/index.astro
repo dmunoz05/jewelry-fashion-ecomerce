@@ -180,12 +180,14 @@ const formatPrice = (value: any) => {
         bg-[#2B0001] shadow-xl shadow-black/30 border border-[#4f0a0a]/40
         transition-all duration-300 group-hover:border-[#850000]/70"
               >
-                <div
-                  class="w-full h-full bg-center bg-cover 
-          transition-transform duration-300 ease-out group-hover:scale-110"
-                  style={`background-image: url('${product.image_url}');`}
-                  data-alt={product.product_name}
-                />
+                <a href={`/product/${product.id}`}>
+                  <div
+                    class="w-full h-full bg-center bg-cover 
+                  transition-transform duration-300 ease-out group-hover:scale-110"
+                    style={`background-image: url('${product.image_url}');`}
+                    data-alt={product.product_name}
+                  />
+                </a>
 
                 {product.on_sale ? (
                   <div
@@ -248,18 +250,6 @@ const formatPrice = (value: any) => {
                     </span>
                     Agregar
                   </button>
-
-                  <a
-                    href={"/product/" + product.id}
-                    class="hidden md:flex w-full items-center justify-center gap-x-2 
-            rounded-xl border border-[#550000]/40 bg-[#4A0001]
-            px-3 py-2 text-xs font-bold text-white tracking-wide
-            transition-all duration-300
-            hover:bg-[#850000] hover:border-[#A40000]/80
-            active:scale-[0.97]"
-                  >
-                    Ver producto
-                  </a>
                 </div>
               </div>
             </div>
