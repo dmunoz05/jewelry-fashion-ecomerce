@@ -57,7 +57,7 @@ body {
 .form-input {
   background-color: white;
   border-color: #480001;
-  padding: 0.65rem 0;
+  padding: 0.65rem 1rem;
   border-top: 0;
   border-left: 0;
   border-right: 0;
@@ -73,7 +73,7 @@ body {
 .form-input::placeholder {
   color: #252525;
   opacity: 1;
-  padding-left: 15px;
+  padding-left: 1px;
 }
 
 .text-primary-gradient {
@@ -136,3 +136,8 @@ body {
   animation: glowLine 4s infinite ease-in-out;
   transform-origin: center;
 }
+
+.carousel-track {
+  transition: transform 0.6s ease;
+}
+

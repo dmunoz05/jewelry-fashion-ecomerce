@@ -2,10 +2,10 @@
 import BaseLayout from "../../layouts/Layout.astro";
 
 export async function getStaticPaths() {
+  const API_URL = import.meta.env.PUBLIC_API_URL;
+
   try {
-    const res = await fetch(
-      "https://admin.jewelryfashionoficial.com/wp-json/custom-api/v1/api-json/v1/get_categories/?nocache=53244"
-    );
+    const res = await fetch(`${API_URL}/get_categories/?nocache=53244`);
 
     const categories = await res.json();
 
@@ -19,14 +19,14 @@ export async function getStaticPaths() {
 }
 
 const { id } = Astro.params;
+// ------------------------------------------------
 
 // Cargar productos por categoría
 let products = [];
+const API_URL = import.meta.env.PUBLIC_API_URL;
 
 try {
-  const response = await fetch(
-    `https://admin.jewelryfashionoficial.com/wp-json/custom-api/v1/api-json/v1/get_products_by_category/${id}`
-  );
+  const response = await fetch(`${API_URL}/get_products_by_category/${id}`);
   products = await response.json();
 } catch (error) {
   console.error("Error al cargar productos por categoría:", error);
@@ -36,9 +36,7 @@ try {
 let categories = [];
 
 try {
-  const response = await fetch(
-    "https://admin.jewelryfashionoficial.com/wp-json/custom-api/v1/api-json/v1/get_categories/?nocache=53244"
-  );
+  const response = await fetch(`${API_URL}/get_categories/?nocache=53244`);
   categories = await response.json();
 } catch (err) {
   console.error("Error loading categories:", err);
@@ -180,12 +178,23 @@ const formatPrice = (value: any) => {
                 ) : null}
               </div>
 
-              <div class="flex flex-col gap-2 px-1 select-none">
-                <div>
-                  <p class="text-white text-sm font-semibold tracking-wide">
+              <div>
+                <div class="flex items-center gap-2 flex justify-between">
+                  <p class="text-white text-xl font-semibold tracking-wide">
                     {product.product_name}
                   </p>
-                  <p class="text-gray-400 text-xs">{product.material}</p>
+
+                  <a
+                    href={"/product/" + product.id}
+                    class="hidden md:flex items-center justify-center 
+      rounded-lg border border-[#550000]/40 bg-[#4A0001]
+      px-3 py-1.5 text-[11px] font-bold text-white tracking-wide
+      transition-all duration-300
+      hover:bg-[#850000] hover:border-[#A40000]/80
+      active:scale-[0.97]"
+                  >
+                    Ver
+                  </a>
                 </div>
 
                 <div class="flex items-center gap-2 flex-wrap">
