@@ -1,15 +1,5 @@
 ---
 import BaseLayout from "../../layouts/Layout.astro";
-
-const user = await Astro.locals.currentUser();
-
-if (!user) {
-  return Astro.redirect("/sign-in");
-}
-
-const userEmail = user.emailAddresses[0]?.emailAddress;
-const userName = user.fullName;
-const userNumber = user.phoneNumbers[0]?.phoneNumber.replace("+57", "");
 ---
 
 <BaseLayout>
@@ -84,7 +74,6 @@ const userNumber = user.phoneNumbers[0]?.phoneNumber.replace("+57", "");
                 type="text"
                 class="mt-2 w-full rounded-lg border border-gray-300 bg-gray-50 h-12 px-4 text-gray-900 focus:ring-2 focus:ring-gray-800 focus:border-gray-800 transition"
                 placeholder="Ej: Juan Pérez"
-                value={userName}
                 required
               />
             </label>
@@ -96,7 +85,6 @@ const userNumber = user.phoneNumbers[0]?.phoneNumber.replace("+57", "");
                 type="email"
                 class="mt-2 w-full rounded-lg border border-gray-300 bg-gray-50 h-12 px-4 text-gray-900 focus:ring-2 focus:ring-gray-800 focus:border-gray-800 transition"
                 placeholder="correo@mail.com"
-                value={userEmail}
                 readonly
                 required
               />
@@ -109,7 +97,6 @@ const userNumber = user.phoneNumbers[0]?.phoneNumber.replace("+57", "");
                 type="tel"
                 class="mt-2 w-full rounded-lg border border-gray-300 bg-gray-50 h-12 px-4 text-gray-900 focus:ring-2 focus:ring-gray-800 focus:border-gray-800 transition"
                 placeholder="3001234567"
-                value={userNumber}
                 required
               />
             </label>
@@ -231,8 +218,61 @@ const userNumber = user.phoneNumbers[0]?.phoneNumber.replace("+57", "");
       </p>
     </div>
 
+    <script
+      src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"
+    ></script>
     <script type="module">
-      window.addEventListener("DOMContentLoaded", () => {
+      // Initialize Clerk
+      const clerkPublishableKey =
+        import.meta.env.PUBLIC_CLERK_PUBLISHABLE_KEY ||
+        "pk_test_YWN0aXZlLXN0aW5ncmF5LTY4LmNsZXJrLmFjY291bnRzLmRldiQ";
+
+      window.addEventListener("DOMContentLoaded", async () => {
+        // Load Clerk
+        const clerk = window.Clerk;
+
+        if (!clerk) {
+          console.error("Clerk not loaded");
+          return;
+        }
+
+        try {
+          await clerk.load({
+            publishableKey: clerkPublishableKey,
+          });
+
+          // Check if user is signed in
+          if (!clerk.user) {
+            // Redirect to sign-in if not authenticated
+            window.location.href = "/sign-in";
+            return;
+          }
+
+          // Populate user data in form
+          const user = clerk.user;
+          const buyerNameInput = document.getElementById("buyer-name");
+          const buyerEmailInput = document.getElementById("buyer-email");
+          const buyerPhoneInput = document.getElementById("buyer-phone");
+
+          if (buyerNameInput && user.fullName) {
+            buyerNameInput.value = user.fullName;
+          }
+
+          if (buyerEmailInput && user.primaryEmailAddress) {
+            buyerEmailInput.value = user.primaryEmailAddress.emailAddress;
+          }
+
+          if (buyerPhoneInput && user.primaryPhoneNumber) {
+            const phoneNumber = user.primaryPhoneNumber.phoneNumber.replace(
+              "+57",
+              ""
+            );
+            buyerPhoneInput.value = phoneNumber;
+          }
+        } catch (error) {
+          console.error("Error loading Clerk:", error);
+        }
+
         const elItems = document.getElementById("cart-items");
         const elTotal = document.getElementById("cart-total");
         const btnClear = document.getElementById("checkout-clear");
@@ -401,14 +441,11 @@ const userNumber = user.phoneNumbers[0]?.phoneNumber.replace("+57", "");
             price: item.price,
           }));
 
-          fetch(
-            "https://admin.jewelryfashionoficial.com/wp-json/custom-api/v1/create-payment",
-            {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ name, email, phone, products }),
-            }
-          )
+          fetch(`${import.meta.env.PUBLIC_API_URL}/create-payment`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name, email, phone, products }),
+          })
             .then((res) => res.json())
             .then((data) => {
               if (!data.success) {

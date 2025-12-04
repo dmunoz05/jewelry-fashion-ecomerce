@@ -50,7 +50,7 @@ import BaseLayout from "../../layouts/Layout.astro";
       </div>
 
       <!-- BOTÓN FINAL -->
-      <a href="/checkout" class="block mt-5 cursor-pointer">
+      <a id="checkout-btn" href="/checkout" class="block mt-5 cursor-pointer">
         <button
           class="w-full cursor-pointer bg-[#A40000] hover:bg-[#C00000] transition-all
                  text-white font-bold text-base py-4 rounded-lg
@@ -70,6 +70,7 @@ import BaseLayout from "../../layouts/Layout.astro";
     const listEl = document.getElementById("cart-list");
     const totalEl = document.getElementById("cart-total");
     const subtotalEl = document.getElementById("cart-subtotal");
+    const checkoutBtn = document.getElementById("checkout-btn");
 
     const formatPrice = (value: number) => {
       const number = Number(value) || 0;
@@ -88,6 +89,7 @@ import BaseLayout from "../../layouts/Layout.astro";
         listEl.classList.add("hidden");
         totalEl.textContent = formatPrice(0);
         subtotalEl.textContent = formatPrice(0);
+        checkoutBtn.classList.add("hidden");
         return;
       }
 

@@ -3,10 +3,10 @@ import Reels from "./Reels.astro";
 
 let products = [];
 // Fetch productos
+const API_URL = import.meta.env.PUBLIC_API_URL;
+
 try {
-  const response = await fetch(
-    "https://admin.jewelryfashionoficial.com/wp-json/custom-api/v1/api-json/v1/get_products/home/?nocache=12345"
-  );
+  const response = await fetch(`${API_URL}/get_products/home/?nocache=12345`);
 
   products = await response.json();
 } catch (err) {
@@ -17,9 +17,7 @@ try {
 let categories = [];
 
 try {
-  const response = await fetch(
-    "https://admin.jewelryfashionoficial.com/wp-json/custom-api/v1/api-json/v1/get_categories/?nocache=53244"
-  );
+  const response = await fetch(`${API_URL}/get_categories/?nocache=53244`);
   categories = await response.json();
 } catch (err) {
   console.error("Error loading categories:", err);
@@ -38,13 +36,8 @@ const formatPrice = (value: any) => {
 <div title="Jewelryfashion Oficial">
   <main class="relative h-screen w-full overflow-hidden">
     <div class="absolute inset-0 z-0">
-      <!-- <img
-        src="https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?q=80&w=2070&auto=format&fit=crop"
-        alt="Background woman looking back"
-        class="w-full h-full object-cover object-center"
-      /> -->
       <video
-        src="/src/assets/video1.mp4"
+        src="/video1.mp4"
         autoplay
         muted
         loop
@@ -143,19 +136,19 @@ const formatPrice = (value: any) => {
             <div
               class="h-full w-full flex-shrink-0 bg-cover bg-center bg-no-repeat"
               data-alt="Close-up of a person with elegant ear piercings wearing gold jewelry."
-              style='background-image: linear-gradient(rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.5) 100%), url("/src/assets/Copia\ de\ 1\ 6.png");'
+              style='background-image: linear-gradient(rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.5) 100%), url("/1.png");'
             >
             </div>
             <div
               class="h-full w-full flex-shrink-0 bg-cover bg-center bg-no-repeat"
               data-alt="A luxurious gold piercing with intricate details against a dark backdrop."
-              style='background-image: linear-gradient(rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.5) 100%), url("/src/assets/2.jpg");'
+              style='background-image: linear-gradient(rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.5) 100%), url("/2.jpg");'
             >
             </div>
             <div
               class="h-full w-full flex-shrink-0 bg-cover bg-center bg-no-repeat"
               data-alt="A person showcasing a stylish nose piercing."
-              style='background-image: linear-gradient(rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.5) 100%), url("/src/assets/3.jpg");'
+              style='background-image: linear-gradient(rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.5) 100%), url("/3.jpg");'
             >
             </div>
           </div>
@@ -177,13 +170,13 @@ const formatPrice = (value: any) => {
               </h2>
             </div>
             <button
-              onclick="window.location.href='/catalog/'"
+              onclick="window.location.href='/catalog'"
               class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl bg-primary px-4 text-sm font-bold leading-normal tracking-[0.015em] text-white transition-colors h-10 hover:bg-primary/90 @[480px]:h-12 @[480px]:px-5 @[480px]:text-base @[480px]:font-bold @[480px]:leading-normal @[480px]:tracking-[0.015em]"
             >
               <span class="truncate">Ver Colección</span>
             </button>
           </div>
-          
+
           <button
             class="carousel-prev absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-black/30 p-2 text-white transition-colors hover:bg-black/50 @[480px]:left-4"
           >
@@ -378,7 +371,7 @@ const formatPrice = (value: any) => {
     transition: transform 0.6s ease;
   }
 </style>
-<script>
+<script type="module">
   window.addEventListener("DOMContentLoaded", () => {
     const callToAction = document.getElementById("callToAction");
     if (callToAction) {
