@@ -58,8 +58,8 @@ const formatPrice = (value: any) => {
   <div
     class="relative flex min-h-screen w-full flex-col mt-20 bg-[#000000] overflow-x-hidden"
   >
-    <main class="flex-grow container mx-auto px-4 py-8">
-      <div class="grid grid-cols-1 md:grid-cols-2 md:gap-12">
+    <main class="pt-6 mt-10 mx-auto max-w-7xl">
+      <div class="grid grid-cols-1 md:grid-cols-2 md:gap-12 mt-10">
         <!-- Galería dinámica -->
         <div class="flex flex-col gap-4">
           <!-- Imagen principal -->
@@ -70,9 +70,25 @@ const formatPrice = (value: any) => {
           >
             <button
               id="zoom-btn"
-              class="absolute top-3 right-3 bg-black/50 p-2 rounded-full text-white hover:bg-black/75 transition-colors z-10"
+              style="padding-left: 7px;padding-right: 7px;padding-top: 7px;padding-bottom: 7px;"
+              class="absolute flex cursor-pointer items-center justify-center top-3 right-3 bg-black/50 rounded-full text-white hover:bg-black/75 transition-colors z-10"
             >
-              <span class="material-symbols-outlined">zoom_in</span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="icon icon-tabler icons-tabler-outline icon-tabler-zoom-in"
+                ><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path
+                  d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0"></path><path
+                  d="M7 10l6 0"></path><path d="M10 7l0 6"></path><path
+                  d="M21 21l-6 -6"></path></svg
+              >
             </button>
           </div>
 
@@ -137,122 +153,101 @@ const formatPrice = (value: any) => {
               }
             </ul>
           </div>
-        </div>
 
-        <!-- 💰 Precios -->
-        <div class="flex items-center align-center gap-3">
-          <!-- Si no tiene descuento -->
-          {
-            productSelected?.discount ? (
-              <>
+          <!-- 💰 Precios -->
+          <div class="flex items-center align-center gap-3">
+            <!-- Si no tiene descuento -->
+            {
+              productSelected?.discount ? (
+                <>
+                  <p class="text-white text-3xl font-bold">
+                    {formatPrice(
+                      productSelected?.price - productSelected?.discount
+                    )}
+                  </p>
+                  <p class="text-gray-500 text-lg font-normal line-through">
+                    {formatPrice(productSelected?.price)}
+                  </p>
+                </>
+              ) : (
                 <p class="text-white text-3xl font-bold">
-                  {formatPrice(
-                    productSelected?.price - productSelected?.discount
-                  )}
-                </p>
-                <p class="text-gray-500 text-lg font-normal line-through">
                   {formatPrice(productSelected?.price)}
                 </p>
-              </>
-            ) : (
-              <p class="text-white text-3xl font-bold">
-                {formatPrice(productSelected?.price)}
-              </p>
-            )
-          }
+              )
+            }
 
-          {
-            productSelected?.discount ? (
-              <span class="bg-primary text-white text-xs font-bold px-2.5 py-1 rounded-full">
-                {productSelected.discount}% OFF
-              </span>
-            ) : null
-          }
+            {
+              productSelected?.discount ? (
+                <span class="bg-primary text-white text-xs font-bold px-2.5 py-1 rounded-full">
+                  {productSelected.discount}% OFF
+                </span>
+              ) : null
+            }
+          </div>
+
+          <!-- 🛒 Botones -->
+          <div class="flex flex-col gap-2.5">
+            <button
+              id="add-to-cart-btn"
+              data-product={encodeURIComponent(
+                JSON.stringify(productSelected || {})
+              )}
+              class="flex w-full items-center cursor-pointer justify-center gap-x-2 rounded-lg bg-primary hover:bg-primary-darker px-4 py-3 text-white text-base font-bold transition-colors"
+            >
+              <span class="material-symbols-outlined text-base"
+                ><svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="icon icon-tabler icons-tabler-outline icon-tabler-shopping-bag-plus"
+                  ><path stroke="none" d="M0 0h24v24H0z" fill="none"
+                  ></path><path
+                    d="M12.5 21h-3.926a3 3 0 0 1 -2.965 -2.544l-1.255 -8.152a2 2 0 0 1 1.977 -2.304h11.339a2 2 0 0 1 1.977 2.304l-.263 1.708"
+                  ></path><path d="M16 19h6"></path><path d="M19 16v6"
+                  ></path><path d="M9 11v-5a3 3 0 0 1 6 0v5"></path></svg
+                ></span
+              >
+              Agregar al carrito
+            </button>
+          </div>
         </div>
+      </div>
+      <!-- 🔗 Productos relacionados -->
+      <div class="border-t border-white/10 pt-6 mt-10 mx-auto">
+        <h2 class="text-white text-xl font-bold mb-4">
+          Productos Relacionados
+        </h2>
 
-        <!-- 🛒 Botones -->
-        <div class="flex flex-col gap-2.5">
-          <button
-            id="add-to-cart-btn"
-            data-product={encodeURIComponent(
-              JSON.stringify(productSelected || {})
-            )}
-            class="flex w-full items-center cursor-pointer justify-center gap-x-2 rounded-lg bg-primary hover:bg-primary-darker px-4 py-3 text-white text-base font-bold transition-colors"
-          >
-            <span class="material-symbols-outlined text-base"
-              ><svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="icon icon-tabler icons-tabler-outline icon-tabler-shopping-bag-plus"
-                ><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path
-                  d="M12.5 21h-3.926a3 3 0 0 1 -2.965 -2.544l-1.255 -8.152a2 2 0 0 1 1.977 -2.304h11.339a2 2 0 0 1 1.977 2.304l-.263 1.708"
-                ></path><path d="M16 19h6"></path><path d="M19 16v6"
-                ></path><path d="M9 11v-5a3 3 0 0 1 6 0v5"></path></svg
-              ></span
-            >
-            Agregar al carrito
-          </button>
-
-          <button
-            class="flex items-center justify-center gap-2 w-full py-3 rounded-lg
-                bg-white/5 border border-white/10 text-white font-medium text-sm
-                hover:bg-white/10 transition-all"
-          >
-            <span class="material-symbols-outlined text-base"
-              ><svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="icon icon-tabler icons-tabler-outline icon-tabler-bolt"
-                ><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path
-                  d="M13 3l0 7l6 0l-8 11l0 -7l-6 0l8 -11"></path></svg
-              ></span
-            >
-            Compra rápida
-          </button>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {
+            productsRelationShip.map((product: any) => (
+              <div class="flex flex-col gap-3">
+                <a
+                  href={`/product/${product.id}`}
+                  class="relative cursor-pointer w-full bg-center bg-no-repeat aspect-square bg-cover rounded-xl bg-bg-accent-darker"
+                  style={`background-image: url("${product.image_url}");`}
+                />
+                <div class="flex flex-col gap-1">
+                  <p class="text-white text-sm font-semibold leading-tight">
+                    {product.name}
+                  </p>
+                  <p class="text-gray-400 text-xs">{product.material}</p>
+                  <p class="text-white text-sm font-bold mt-1">
+                    {formatPrice(product.price)}
+                  </p>
+                </div>
+              </div>
+            ))
+          }
         </div>
       </div>
     </main>
-
-    <!-- 🔗 Productos relacionados -->
-    <div class="border-t border-white/10 pt-6 mt-10 max-w-5xl mx-auto">
-      <h2 class="text-white text-xl font-bold mb-4">Productos Relacionados</h2>
-
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {
-          productsRelationShip.map((product: any) => (
-            <div class="flex flex-col gap-3">
-              <div
-                class="relative w-full bg-center bg-no-repeat aspect-square bg-cover rounded-xl bg-bg-accent-darker"
-                style={`background-image: url("${product.image_url}");`}
-              />
-              <div class="flex flex-col gap-1">
-                <p class="text-white text-sm font-semibold leading-tight">
-                  {product.name}
-                </p>
-                <p class="text-gray-400 text-xs">{product.material}</p>
-                <p class="text-white text-sm font-bold mt-1">
-                  {formatPrice(product.price)}
-                </p>
-              </div>
-            </div>
-          ))
-        }
-      </div>
-    </div>
   </div>
 
   <!-- MODAL DE ZOOM -->
@@ -262,9 +257,22 @@ const formatPrice = (value: any) => {
   >
     <button
       id="modal-close"
-      class="absolute top-6 right-6 text-white/70 hover:text-white transition-colors z-50 bg-black/20 p-2 rounded-full"
+      class="absolute cursor-pointer top-6 right-6 text-white/70 hover:text-white transition-colors z-50 bg-black/20 p-2 rounded-full"
     >
-      <span class="material-symbols-outlined text-4xl">close</span>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="icon icon-tabler icons-tabler-outline icon-tabler-x"
+        ><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path
+          d="M18 6l-12 12"></path><path d="M6 6l12 12"></path></svg
+      >
     </button>
 
     <div
