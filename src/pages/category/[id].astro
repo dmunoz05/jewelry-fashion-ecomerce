@@ -1,11 +1,11 @@
 ---
 import BaseLayout from "../../layouts/Layout.astro";
 
-function generateRandomNumber() {
-  return Math.floor(Math.random() * 100000);
-}
-
 export async function getStaticPaths() {
+  function generateRandomNumber() {
+    return Math.floor(Math.random() * 100000);
+  }
+
   const API_URL = import.meta.env.PUBLIC_API_URL;
 
   try {
@@ -40,6 +40,10 @@ try {
 
 // Cargar categorías para menú
 let categories = [];
+
+function generateRandomNumber() {
+  return Math.floor(Math.random() * 100000);
+}
 
 try {
   const response = await fetch(
