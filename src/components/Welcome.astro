@@ -37,10 +37,14 @@ const formatPrice = (value: any) => {
   <main class="relative h-screen w-full overflow-hidden">
     <div class="absolute inset-0 z-0">
       <video
+        id="heroVideo"
         src="/video1.mp4"
         autoplay
-        muted
         loop
+        muted
+        playsinline
+        webkit-playsinline
+        preload="auto"
         class="w-full h-full object-cover backdrop-blur-2xl filter brightness-50 bg-black/10 object-center"
       ></video>
 
@@ -327,11 +331,27 @@ const formatPrice = (value: any) => {
     </div>
   </main>
 </div>
+
 <style>
   .carousel-track {
     transition: transform 0.6s ease;
   }
 </style>
+
+<script type="module">
+  document.addEventListener("DOMContentLoaded", () => {
+    const v = document.getElementById("heroVideo");
+
+    if (!v) return;
+
+    v.muted = true;
+    v.setAttribute("muted", "");
+    v.play().catch(() => {
+      document.addEventListener("touchstart", () => v.play(), { once: true });
+    });
+  });
+</script>
+
 <script type="module">
   window.addEventListener("DOMContentLoaded", () => {
     const callToAction = document.getElementById("callToAction");
