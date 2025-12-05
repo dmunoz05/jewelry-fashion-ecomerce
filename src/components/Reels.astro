@@ -50,7 +50,6 @@ async function fetchReels() {
 
   for (const reel of reels) {
     const encoded = encodeURIComponent(reel.reelUrl);
-    console.log(encoded);
     const url = `${API}?url=${encoded}`;
 
     try {
