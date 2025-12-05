@@ -19,7 +19,7 @@ export async function getStaticPaths() {
       params: { id: product.id.toString() },
     }));
   } catch (error) {
-    console.error("Error obteniendo productos:", error);
+    console.log("Error obteniendo productos:", error);
     return [];
   }
 }
@@ -43,7 +43,7 @@ try {
   const data = await response.json();
   productSelected = data[0] || null;
 } catch (error) {
-  console.error("Error loading product:", error);
+  console.log("Error loading product:", error);
 }
 
 // 4. PRODUCTOS RELACIONADOS
@@ -55,7 +55,7 @@ try {
 
   productsRelationShip = allProducts.filter((p: any) => p.id.toString() !== id);
 } catch (error) {
-  console.error("Error loading related products:", error);
+  console.log("Error loading related products:", error);
 }
 
 const formatPrice = (value: any) => {

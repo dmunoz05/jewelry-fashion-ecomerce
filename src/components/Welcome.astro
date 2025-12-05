@@ -16,7 +16,7 @@ try {
 
   products = await response.json();
 } catch (err) {
-  console.error("Error loading related products:", err);
+  console.log("Error loading related products:", err);
 }
 
 // Cargar categorías
@@ -28,7 +28,7 @@ try {
   );
   categories = await response.json();
 } catch (err) {
-  console.error("Error loading categories:", err);
+  console.log("Error loading categories:", err);
 }
 
 const formatPrice = (value: any) => {
@@ -400,7 +400,7 @@ const formatPrice = (value: any) => {
         });
       });
     } catch (e) {
-      console.error(e);
+      console.log(e);
     }
   });
   //carrousel de home-------------------------
