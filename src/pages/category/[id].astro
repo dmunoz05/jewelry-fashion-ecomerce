@@ -275,7 +275,20 @@ const formatPrice = (value: any) => {
           class="flex items-center justify-center gap-2 rounded-lg border border-[#480001] bg-[#2B0001] p-2 text-sm font-medium disabled:opacity-50"
           disabled=""
         >
-          <span class="material-symbols-outlined text-lg">chevron_left</span>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-left"
+            ><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path
+              d="M15 6l-6 6l6 6"></path></svg
+          >
           <span class="hidden sm:inline">Anterior</span>
         </button>
         <p class="text-sm text-gray-400">Página 1 de 5</p>
@@ -283,7 +296,20 @@ const formatPrice = (value: any) => {
           class="flex items-center justify-center gap-2 rounded-lg border border-[#480001] bg-[#2B0001] p-2 text-sm font-medium"
         >
           <span class="hidden sm:inline">Siguiente</span>
-          <span class="material-symbols-outlined text-lg">chevron_right</span>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-right"
+            ><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path
+              d="M9 6l6 6l-6 6"></path></svg
+          >
         </button>
       </div>
     </main>
@@ -326,15 +352,7 @@ const formatPrice = (value: any) => {
       console.log(e);
     }
 
-    const categories = [
-      // { name: "PIERCING OREJA", link: "/categoria/piercing-oreja" },
-      // { name: "PIERCING NARIZ", link: "/categoria/piercing-nariz" },
-      // { name: "LUXURY ORO", link: "/categoria/luxury-oro" },
-      // { name: "TITANIO", link: "/categoria/titanio" },
-      // { name: "COLECCIONES", link: "/categoria/colecciones" },
-      // { name: "ACCESORIOS", link: "/categoria/accesorios" },
-      // { name: "ARETES", link: "/categoria/aretes" },
-    ];
+    const categories = [];
 
     let index = 0;
 
@@ -349,7 +367,7 @@ const formatPrice = (value: any) => {
       setTimeout(() => {
         // Cambiar el contenido a un enlace clickeable
         const cat = categories[index];
-        item.innerHTML = `<a href="${cat.link}" class="transition-opacity duration-500 opacity-100 text-white">${cat.name}</a>`;
+        item.innerHTML = `<a href="/category/${cat.id}" class="transition-opacity duration-500 opacity-100 text-white">${cat.name}</a>`;
 
         // Fade in
         item.classList.remove("opacity-0");
