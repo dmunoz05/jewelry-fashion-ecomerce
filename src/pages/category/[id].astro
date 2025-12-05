@@ -2,10 +2,16 @@
 import BaseLayout from "../../layouts/Layout.astro";
 
 export async function getStaticPaths() {
+  function generateRandomNumber() {
+    return Math.floor(Math.random() * 100000);
+  }
+
   const API_URL = import.meta.env.PUBLIC_API_URL;
 
   try {
-    const res = await fetch(`${API_URL}/get_categories/?nocache=53244`);
+    const res = await fetch(
+      `${API_URL}/get_categories/?nocache=${generateRandomNumber()}`
+    );
 
     const categories = await res.json();
 
@@ -35,8 +41,14 @@ try {
 // Cargar categorías para menú
 let categories = [];
 
+function generateRandomNumber() {
+  return Math.floor(Math.random() * 100000);
+}
+
 try {
-  const response = await fetch(`${API_URL}/get_categories/?nocache=53244`);
+  const response = await fetch(
+    `${API_URL}/get_categories/?nocache=${generateRandomNumber()}`
+  );
   categories = await response.json();
 } catch (err) {
   console.error("Error loading categories:", err);
