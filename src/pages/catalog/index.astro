@@ -323,7 +323,8 @@ const formatPrice = (value: any) => {
 
     let categories = [];
 
-    const API_URL = import.meta.env.PUBLIC_API_URL;
+    const API_URL =
+      "https://admin.jewelryfashionoficial.com/wp-json/custom-api/v1/api-json/v1";
 
     try {
       const response = await fetch(`${API_URL}/get_categories/?nocache=53244`);
