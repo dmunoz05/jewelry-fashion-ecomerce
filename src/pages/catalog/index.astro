@@ -4,9 +4,15 @@ import BaseLayout from "../../layouts/Layout.astro";
 let products = [];
 let category = [];
 
+function generateRandomNumber() {
+  return Math.floor(Math.random() * 100000);
+}
+
 const API_URL = import.meta.env.PUBLIC_API_URL;
 try {
-  const response = await fetch(`${API_URL}/get_categories/?nocache=53244`);
+  const response = await fetch(
+    `${API_URL}/get_categories/?nocache=${generateRandomNumber()}`
+  );
   category = await response.json();
 
   // Evitar mostrar el mismo producto como relacionado
@@ -16,7 +22,9 @@ try {
 
 // Fetch productos relacionados
 try {
-  const response = await fetch(`${API_URL}/get_products/home/`);
+  const response = await fetch(
+    `${API_URL}/get_products/home/?nocache=${generateRandomNumber()}`
+  );
   products = await response.json();
 } catch (err) {
   console.error("Error loading related products:", err);
