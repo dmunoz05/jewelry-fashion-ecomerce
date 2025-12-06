@@ -1,6 +1,7 @@
 ---
 import Header from "./Header.astro";
 import Foter from "./Foter.astro";
+import WhatsAppButton from "../components/WhatsAppButton.astro";
 import "../styles/global.css";
 ---
 
@@ -9,7 +10,7 @@ import "../styles/global.css";
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
-    <link rel="icon" type="image/x-icon" href="/logo1.ico" />
+    <link rel="icon" type="image/svg+xml" href="/logo1.svg" />
     <meta name="generator" content={Astro.generator} />
     <title>Jewelryfashion Oficial</title>
     <meta property="og:url" content="https://jewelryfashionoficial.com" />
@@ -18,7 +19,7 @@ import "../styles/global.css";
     <meta property="og:description" content="Jewelryfashion Oficial" />
     <meta
       property="og:image"
-      content="https://jewelryfashionoficial.com/logo1.jpg"
+      content="https://jewelryfashionoficial.com/logo_bg.png"
     />
     <meta property="og:locale" content="es_ES" />
     <meta property="og:site_name" content="Jewelryfashion Oficial" />
@@ -40,7 +41,7 @@ import "../styles/global.css";
     />
     <meta
       property="og:instagram:image"
-      content="https://jewelryfashionoficial.com/logo1.jpg"
+      content="https://jewelryfashionoficial.com/logo_bg.png"
     />
 
     <meta name="description" content="Jewelryfashion Oficial" />
@@ -98,6 +99,7 @@ import "../styles/global.css";
     <Header />
     <slot />
     <Foter />
+    <WhatsAppButton />
   </body>
 </html>
 
