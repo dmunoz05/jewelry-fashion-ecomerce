@@ -1,4 +1,6 @@
 ---
+export const prerender = false;
+
 import "swiper/css";
 import "swiper/css/navigation";
 
@@ -43,14 +45,18 @@ const reels = [
 ];
 
 const API_URL = import.meta.env.PUBLIC_API_URL;
-const API = `${API_URL}/get_reel_cached`;
+const API = `${API_URL}/get_reels`;
+
+function generateRandomNumber() {
+  return Math.floor(Math.random() * 100000) + Date.now();
+}
 
 async function fetchReels() {
   const results = [];
 
   for (const reel of reels) {
     const encoded = encodeURIComponent(reel.reelUrl);
-    const url = `${API}?url=${encoded}`;
+    const url = `${API}?url=${encoded}?nocache=${generateRandomNumber()}`;
 
     try {
       const res = await fetch(url);
@@ -86,81 +92,77 @@ loadingReels = false;
 ---
 
 <section class="w-full py-10 bg-black">
-  <div class="max-w-[1400px] mx-auto px-4">
-    <h2 class="text-white text-2xl text-center font-bold mb-8 font-sans">
-      Trending Reels
-    </h2>
+  {
+    reelsWithVideo.length > 0 && (
+      <>
+        <div class="max-w-[1400px] mx-auto px-4">
+          <h2 class="text-white text-2xl text-center font-bold mb-8 font-sans">
+            Trending Reels
+          </h2>
 
-    <div class="swiper reels-swiper !pb-10">
-      <div class="swiper-wrapper">
-        {
-          loadingReels || reelsWithVideo.length === 0 ? (
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-              {Array.from({ length: 4 }).map(() => (
-                <div class="w-full aspect-[9/16] bg-gray-800/50 rounded-[32px] animate-pulse" />
-              ))}
-            </div>
-          ) : (
-            reelsWithVideo.map((reel) => (
-              <div class="swiper-slide">
-                <div class="reel-card group relative w-full aspect-[9/16] rounded-[32px] overflow-hidden bg-gray-900 border border-white/10 shadow-2xl">
-                  <div class="absolute top-0 left-0 w-full p-5 z-20 flex items-center gap-3 bg-gradient-to-b from-black/80 via-black/40 to-transparent">
-                    <div class="relative w-10 h-10 rounded-full p-[2px] bg-gradient-to-tr from-yellow-400 to-pink-500">
-                      <img
-                        src={reel.avatar}
-                        class="w-full h-full rounded-full border-2 border-black"
-                      />
-                    </div>
-                    <div class="flex flex-col text-white">
-                      <span class="font-bold text-sm">{reel.user}</span>
-                      <span class="text-[10px] opacity-80">
-                        {reel.followers}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div
-                    class="w-full h-full relative z-10 bg-black cursor-pointer"
-                    onClick={`window.open('${reel.reelUrl}', '_blank')`}
-                  >
-                    {reel.videoUrl ? (
-                      <video
-                        src={reel.videoUrl}
-                        autoplay
-                        muted
-                        loop
-                        playsInline
-                        class="absolute inset-0 w-full h-full object-cover scale-[1.15]"
-                      />
-                    ) : reel.thumbnail ? (
-                      <img
-                        src={reel.thumbnail}
-                        class="absolute inset-0 w-full h-full object-cover scale-[1.15]"
-                      />
-                    ) : (
-                      <div class="flex items-center justify-center text-white">
-                        Cargando...
-                      </div>
-                    )}
-                  </div>
-
-                  <div class="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-black/60 to-transparent z-20" />
+          <div class="swiper reels-swiper !pb-10">
+            <div class="swiper-wrapper">
+              {loadingReels || reelsWithVideo.length === 0 ? (
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                  {Array.from({ length: 4 }).map(() => (
+                    <div class="w-full aspect-[9/16] bg-gray-800/50 rounded-[32px] animate-pulse" />
+                  ))}
                 </div>
-              </div>
-            ))
-          )
-        }
-      </div>
-      <!-- <div
-        class="swiper-button-prev !text-white !w-12 !h-12 !bg-white/10 !backdrop-blur-md !rounded-full !left-4 hover:!bg-white/20 transition-colors after:!text-lg"
-      >
-      </div>
-      <div
-        class="swiper-button-next !text-white !w-12 !h-12 !bg-white/10 !backdrop-blur-md !rounded-full !right-4 hover:!bg-white/20 transition-colors after:!text-lg"
-      >
-      </div> -->
-    </div>
-  </div>
+              ) : (
+                reelsWithVideo.map((reel) => (
+                  <div class="swiper-slide">
+                    <div class="reel-card group relative w-full aspect-[9/16] rounded-[32px] overflow-hidden bg-gray-900 border border-white/10 shadow-2xl">
+                      <div class="absolute top-0 left-0 w-full p-5 z-20 flex items-center gap-3 bg-gradient-to-b from-black/80 via-black/40 to-transparent">
+                        <div class="relative w-10 h-10 rounded-full p-[2px] bg-gradient-to-tr from-yellow-400 to-pink-500">
+                          <img
+                            src={reel.avatar}
+                            class="w-full h-full rounded-full border-2 border-black"
+                          />
+                        </div>
+                        <div class="flex flex-col text-white">
+                          <span class="font-bold text-sm">{reel.user}</span>
+                          <span class="text-[10px] opacity-80">
+                            {reel.followers}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div
+                        class="w-full h-full relative z-10 bg-black cursor-pointer"
+                        onClick={`window.open('${reel.reelUrl}', '_blank')`}
+                      >
+                        {reel.videoUrl ? (
+                          <video
+                            src={reel.videoUrl}
+                            autoplay
+                            muted
+                            loop
+                            playsInline
+                            class="absolute inset-0 w-full h-full object-cover scale-[1.15]"
+                          />
+                        ) : reel.thumbnail ? (
+                          <img
+                            src={reel.thumbnail}
+                            class="absolute inset-0 w-full h-full object-cover scale-[1.15]"
+                          />
+                        ) : (
+                          <div class="flex items-center justify-center text-white">
+                            Cargando...
+                          </div>
+                        )}
+                      </div>
+
+                      <div class="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-black/60 to-transparent z-20" />
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+      </>
+    )
+  }
 </section>
 
 <script>
@@ -177,10 +179,6 @@ loadingReels = false;
     },
     centeredSlides: true, // El activo siempre en el centro
     loop: true, // Carrusel infinito
-    // navigation: {
-    //   nextEl: ".swiper-button-next",
-    //   prevEl: ".swiper-button-prev",
-    // },
     autoplay: {
       delay: 2000,
       disableOnInteraction: true,

@@ -1,4 +1,6 @@
 ---
+export const prerender = false;
+
 import Reels from "./Reels.astro";
 
 let products = [];
@@ -6,15 +8,22 @@ let products = [];
 const API_URL = import.meta.env.PUBLIC_API_URL;
 
 function generateRandomNumber() {
-  return Math.floor(Math.random() * 100000);
+  return Math.floor(Math.random() * 100000) + Date.now();
 }
 
 try {
   const response = await fetch(
-    `${API_URL}/get_products/home/?nocache=${generateRandomNumber()}`
+    `${API_URL}/get_products/home/?nocache=${generateRandomNumber()}&test=${generateRandomNumber()}`,
+    { cache: "no-store" }
   );
 
-  products = await response.json();
+  const json = await response.json();
+
+  products = Array.isArray(json)
+    ? json
+    : (json.data ?? json.products ?? json.items ?? []);
+
+  products = Array.isArray(products) ? products : [];
 } catch (err) {
   console.log("Error loading related products:", err);
 }
@@ -24,9 +33,16 @@ let categories = [];
 
 try {
   const response = await fetch(
-    `${API_URL}/get_categories/?nocache=${generateRandomNumber()}`
+    `${API_URL}/get_categories/?nocache=${generateRandomNumber()}&test=${generateRandomNumber()}`,
+    { cache: "no-store" }
   );
-  categories = await response.json();
+  const json = await response.json();
+
+  categories = Array.isArray(json)
+    ? json
+    : (json.data ?? json.categories ?? json.items ?? []);
+
+  categories = Array.isArray(categories) ? categories : [];
 } catch (err) {
   console.log("Error loading categories:", err);
 }
@@ -294,11 +310,8 @@ const formatPrice = (value: any) => {
 
     <style>
       .starry-bg {
-        background-image: radial-gradient(
-            2px 2px at 20px 30px,
-            #eee,
-            rgba(0, 0, 0, 0)
-          ),
+        background-image:
+          radial-gradient(2px 2px at 20px 30px, #eee, rgba(0, 0, 0, 0)),
           radial-gradient(2px 2px at 40px 70px, #fff, rgba(0, 0, 0, 0)),
           radial-gradient(2px 2px at 50px 160px, #ddd, rgba(0, 0, 0, 0)),
           radial-gradient(2px 2px at 90px 40px, #fff, rgba(0, 0, 0, 0)),
@@ -323,11 +336,13 @@ const formatPrice = (value: any) => {
   <Reels />
 
   <!-- --------------------------------------------------- -->
-  <h2
-    class="px-4 pb-3 pt-5 text-[22px] font-bold leading-tight tracking-[-0.015em] text-black dark:text-white"
-  >
-    Productos
-  </h2>
+  {
+    products.length > 0 && (
+      <h2 class="px-4 pb-3 pt-5 text-[22px] font-bold leading-tight tracking-[-0.015em] text-black dark:text-white">
+        Productos
+      </h2>
+    )
+  }
   <div class="grid grid-cols-2 gap-4 p-4 md:grid-cols-4">
     {
       products.map((product: any) => (
@@ -401,11 +416,13 @@ const formatPrice = (value: any) => {
     }
   </div>
 
-  <h2
-    class="px-4 pb-3 pt-8 text-[22px] font-bold leading-tight tracking-[-0.015em] text-black dark:text-white"
-  >
-    Explora Nuestras Categorías
-  </h2>
+  {
+    categories.length > 0 && (
+      <h2 class="px-4 pb-3 pt-8 text-[22px] font-bold leading-tight tracking-[-0.015em] text-black dark:text-white">
+        Explora Nuestras Categorías
+      </h2>
+    )
+  }
   <div class="grid grid-cols-2 gap-4 p-4 md:grid-cols-3">
     {
       categories.map((category: any) => (

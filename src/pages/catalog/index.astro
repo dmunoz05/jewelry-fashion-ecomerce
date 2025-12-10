@@ -1,11 +1,13 @@
 ---
+export const prerender = false;
+
 import BaseLayout from "../../layouts/Layout.astro";
 
 let products = [];
 let category = [];
 
 function generateRandomNumber() {
-  return Math.floor(Math.random() * 100000);
+  return Math.floor(Math.random() * 100000) + Date.now();
 }
 
 const API_URL = import.meta.env.PUBLIC_API_URL;
@@ -13,7 +15,9 @@ try {
   const response = await fetch(
     `${API_URL}/get_categories/?nocache=${generateRandomNumber()}`
   );
-  category = await response.json();
+  const json = await response.json();
+  category = Array.isArray(json) ? json : (json.data ?? json.categories ?? []);
+  category = Array.isArray(category) ? category : [];
 
   // Evitar mostrar el mismo producto como relacionado
 } catch (err) {
@@ -25,7 +29,13 @@ try {
   const response = await fetch(
     `${API_URL}/get_products/home/?nocache=${generateRandomNumber()}`
   );
-  products = await response.json();
+  const json = await response.json();
+
+  products = Array.isArray(json)
+    ? json
+    : (json.data ?? json.products ?? json.items ?? []);
+
+  products = Array.isArray(products) ? products : [];
 } catch (err) {
   console.log("Error loading related products:", err);
 }
@@ -340,7 +350,7 @@ const formatPrice = (value: any) => {
 <script type="module">
   window.addEventListener("DOMContentLoaded", async () => {
     function generateRandomNumber() {
-      return Math.floor(Math.random() * 100000);
+      return Math.floor(Math.random() * 100000) + Date.now();
     }
 
     try {
