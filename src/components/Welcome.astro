@@ -1,44 +1,5 @@
 ---
 import Reels from "./Reels.astro";
-
-let products = [];
-// Fetch productos
-const API_URL = import.meta.env.PUBLIC_API_URL;
-
-function generateRandomNumber() {
-  return Math.floor(Math.random() * 100000);
-}
-
-try {
-  const response = await fetch(
-    `${API_URL}/get_products/home/?nocache=${generateRandomNumber()}`
-  );
-
-  products = await response.json();
-} catch (err) {
-  console.log("Error loading related products:", err);
-}
-
-// Cargar categorías
-let categories = [];
-
-try {
-  const response = await fetch(
-    `${API_URL}/get_categories/?nocache=${generateRandomNumber()}`
-  );
-  categories = await response.json();
-} catch (err) {
-  console.log("Error loading categories:", err);
-}
-
-const formatPrice = (value: any) => {
-  const number = Number(value) || 0;
-  return number.toLocaleString("es-CO", {
-    style: "currency",
-    currency: "COP",
-    minimumFractionDigits: 0,
-  });
-};
 ---
 
 <div title="Jewelryfashion Oficial">
@@ -294,11 +255,8 @@ const formatPrice = (value: any) => {
 
     <style>
       .starry-bg {
-        background-image: radial-gradient(
-            2px 2px at 20px 30px,
-            #eee,
-            rgba(0, 0, 0, 0)
-          ),
+        background-image:
+          radial-gradient(2px 2px at 20px 30px, #eee, rgba(0, 0, 0, 0)),
           radial-gradient(2px 2px at 40px 70px, #fff, rgba(0, 0, 0, 0)),
           radial-gradient(2px 2px at 50px 160px, #ddd, rgba(0, 0, 0, 0)),
           radial-gradient(2px 2px at 90px 40px, #fff, rgba(0, 0, 0, 0)),
@@ -322,109 +280,15 @@ const formatPrice = (value: any) => {
 
   <Reels />
 
-  <!-- --------------------------------------------------- -->
-  <h2
-    class="px-4 pb-3 pt-5 text-[22px] font-bold leading-tight tracking-[-0.015em] text-black dark:text-white"
+  <!-- Productos Grid -->
+
+  <div
+    id="products-grid"
+    class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 py-6"
   >
-    Productos
-  </h2>
-  <div class="grid grid-cols-2 gap-4 p-4 md:grid-cols-4">
-    {
-      products.map((product: any) => (
-        <div class="flex flex-col gap-4 group">
-          <div
-            class="relative w-full aspect-square rounded-2xl overflow-hidden 
-        bg-[#2B0001] shadow-xl shadow-black/30 border border-[#4f0a0a]/40
-        transition-all duration-300 group-hover:border-[#850000]/70"
-          >
-            <a href={`/product/${product.id}`}>
-              <div
-                class="w-full h-full bg-center bg-cover 
-                transition-transform duration-300 ease-out group-hover:scale-110"
-                style={`background-image: url('${product.image_url}');`}
-                data-alt={product.product_name}
-              />
-            </a>
-
-            {product.on_sale ? (
-              <div
-                class="absolute top-2 left-2 
-          bg-[#850000] text-white text-[10px] font-bold px-2 py-0.5 rounded-full 
-          shadow-md shadow-black/40 border border-white/10"
-              >
-                OFERTA
-              </div>
-            ) : null}
-          </div>
-
-          <div>
-            <div class="flex items-center gap-2 flex justify-between">
-              <p class="text-white text-xl font-semibold tracking-wide">
-                {product.product_name}
-              </p>
-            </div>
-            <div class="flex items-center gap-2 flex-wrap">
-              <p class="text-white text-sm font-bold leading-normal">
-                {formatPrice(product.price)}
-              </p>
-              {product.on_sale ? (
-                <p class="text-gray-500 text-xs font-normal leading-normal line-through">
-                  {formatPrice(product.regular_price)}
-                </p>
-              ) : null}
-            </div>
-            <div class="flex flex-col gap-2">
-              <button
-                id={`add-to-cart-btn-${product.id}`}
-                data-product={encodeURIComponent(JSON.stringify(product || {}))}
-                class="flex cursor-pointer w-full items-center justify-center gap-x-2 rounded-lg bg-[#480001] px-3 py-1.5 text-white text-xs font-bold leading-normal"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                  class="icon icon-tabler icons-tabler-filled icon-tabler-garden-cart"
-                >
-                  <>
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                    <path d="M3.324 3a2 2 0 0 1 1.855 1.258l1.097 2.742h14.724a1 1 0 0 1 .94 1.341l-.046 .106l-2.934 5.871a3.5 3.5 0 1 1 -4.96 3.182l.005 -.192a3.5 3.5 0 0 1 .499 -1.618l-2.446 -.258l-3.446 4.75a2 2 0 0 1 -2.08 .762l-.154 -.044a2 2 0 0 1 -1.378 -1.9v-9.804l-1.679 -4.196h-1.321a1 1 0 0 1 -.993 -.883l-.007 -.117a1 1 0 0 1 1 -1zm14.176 13a1.5 1.5 0 1 0 0 3a1.5 1.5 0 0 0 0 -3m-10.5 -2.498l-.002 5.498l2.783 -3.833a5 5 0 0 1 -2.614 -1.474z" />
-                  </>
-                </svg>{" "}
-                Agregar
-              </button>
-            </div>
-          </div>
-        </div>
-      ))
-    }
   </div>
 
-  <h2
-    class="px-4 pb-3 pt-8 text-[22px] font-bold leading-tight tracking-[-0.015em] text-black dark:text-white"
-  >
-    Explora Nuestras Categorías
-  </h2>
-  <div class="grid grid-cols-2 gap-4 p-4 md:grid-cols-3">
-    {
-      categories.map((category: any) => (
-        <a
-          class="group relative flex h-48 items-center justify-center overflow-hidden rounded-xl shadow-lg md:h-64"
-          href={"category/" + category.id}
-        >
-          <div
-            class="absolute inset-0 bg-cover bg-center blur-xs brightness(0.45) bg-no-repeat transition-transform duration-500 group-hover:scale-110"
-            data-alt="Close-up of a curated ear with multiple piercings."
-            style={`background-image: url("${category.image_url}")`}
-          />
-          <div class="absolute inset-0 bg-black/50" />
-          <h3 class="relative text-2xl font-bold text-white">
-            {category.name}
-          </h3>
-        </a>
-      ))
-    }
+  <div id="categories-grid" class="grid grid-cols-2 gap-4 p-4 md:grid-cols-3">
   </div>
 </div>
 
@@ -433,6 +297,13 @@ const formatPrice = (value: any) => {
     transition: transform 0.6s ease;
   }
 </style>
+
+<script>
+  import { initCatalog } from "../utils/js/catalog.js";
+  import { renderCategories } from "../utils/js/categories.js";
+  renderCategories();
+  initCatalog();
+</script>
 
 <script type="module">
   document.addEventListener("DOMContentLoaded", () => {
@@ -491,10 +362,8 @@ const formatPrice = (value: any) => {
       console.log(e);
     }
   });
-  //carrousel de home-------------------------
 
-  // === CARROUSEL HOME ===
-
+  // Carousel Home
   const track = document.querySelector(
     ".relative .absolute.inset-0.flex.transition-transform"
   );
@@ -548,11 +417,3 @@ const formatPrice = (value: any) => {
     updateCarousel();
   }, 3000);
 </script>
-
-<!-- <script>
-  const urlHost = window.location.host;
-  const isLocalhost = urlHost && urlHost.includes("localhost");
-  if (!isLocalhost) {
-    window.location.href = "/maintance";
-  }
-</script> -->

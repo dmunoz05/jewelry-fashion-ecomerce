@@ -66,11 +66,17 @@ import BaseLayout from "../../layouts/Layout.astro";
 
 <script>
   window.addEventListener("DOMContentLoaded", () => {
-    const emptyEl = document.getElementById("cart-empty");
-    const listEl = document.getElementById("cart-list");
-    const totalEl = document.getElementById("cart-total");
-    const subtotalEl = document.getElementById("cart-subtotal");
-    const checkoutBtn = document.getElementById("checkout-btn");
+    const emptyEl = document.getElementById("cart-empty") as HTMLDivElement;
+    const listEl = document.getElementById("cart-list") as HTMLDivElement;
+    const totalEl = document.getElementById("cart-total") as HTMLDivElement;
+    const subtotalEl = document.getElementById(
+      "cart-subtotal"
+    ) as HTMLDivElement;
+    const checkoutBtn = document.getElementById(
+      "checkout-btn"
+    ) as HTMLDivElement;
+
+    if (!emptyEl || !listEl || !totalEl || !subtotalEl || !checkoutBtn) return;
 
     const formatPrice = (value: number) => {
       const number = Number(value) || 0;
@@ -82,6 +88,8 @@ import BaseLayout from "../../layouts/Layout.astro";
     };
 
     function render() {
+      if (!emptyEl || !listEl || !totalEl || !subtotalEl || !checkoutBtn)
+        return;
       const cart = (window.cartApi && window.cartApi.getCart()) || [];
 
       if (!cart.length) {
@@ -94,12 +102,12 @@ import BaseLayout from "../../layouts/Layout.astro";
       }
 
       emptyEl.style.display = "none";
-      listEl.classList.remove("hidden");
+      listEl?.classList.remove("hidden");
       listEl.innerHTML = "";
 
       let total = 0;
 
-      cart.forEach((item) => {
+      cart.forEach((item: any) => {
         total += item.price * item.quantity;
 
         const wrapper = document.createElement("div");
@@ -147,31 +155,35 @@ import BaseLayout from "../../layouts/Layout.astro";
 
     function bindControls() {
       // Eliminar producto
-      document.querySelectorAll("[data-remove]").forEach((btn) => {
+      document.querySelectorAll("[data-remove]").forEach((btn: any) => {
         btn.onclick = () => {
+          if (!window.cartApi) return;
           window.cartApi.removeItem(btn.dataset.remove);
         };
       });
 
       // Botón +
-      document.querySelectorAll("[data-plus]").forEach((btn) => {
+      document.querySelectorAll("[data-plus]").forEach((btn: any) => {
         btn.onclick = () => {
+          if (!window.cartApi) return;
           const id = btn.dataset.plus;
-          const item = window.cartApi.getCart().find((p) => p.id == id);
-          window.cartApi.updateQty(id, item.quantity + 1);
+          const item = window.cartApi.getCart().find((p: any) => p.id == id);
+          if (!item) return;
+          window.cartApi.updateQty(id, (item?.quantity || 1) + 1);
         };
       });
 
       // Botón -
-      document.querySelectorAll("[data-minus]").forEach((btn) => {
+      document.querySelectorAll("[data-minus]").forEach((btn: any) => {
         btn.onclick = () => {
+          if (!window.cartApi) return;
           const id = btn.dataset.minus;
-          const item = window.cartApi.getCart().find((p) => p.id == id);
-
-          if (item.quantity <= 1) {
+          const item = window.cartApi.getCart().find((p: any) => p.id == id);
+          if (!item) return;
+          if ((item?.quantity || 1) <= 1) {
             window.cartApi.removeItem(id);
           } else {
-            window.cartApi.updateQty(id, item.quantity - 1);
+            window.cartApi.updateQty(id, (item?.quantity || 1) - 1);
           }
         };
       });

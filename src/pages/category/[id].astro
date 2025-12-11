@@ -1,4 +1,9 @@
 ---
+Astro.response.headers.set(
+  "Cache-Control",
+  "public, max-age=300, s-maxage=3600"
+);
+
 import BaseLayout from "../../layouts/Layout.astro";
 
 export async function getStaticPaths() {
@@ -89,7 +94,6 @@ const formatPrice = (value: any) => {
   <nav class="relative bg-gray-900 pb-7 p-9 text-white">
     <div class="relative md:static w-full">
       <div
-        id="menu-desktop"
         class="hidden md:flex md:flex-row md:space-x-12 md:justify-center md:items-center
         md:text-xs md:font-medium md:tracking-widest relative"
       >
@@ -119,7 +123,6 @@ const formatPrice = (value: any) => {
         <button
           class="w-full sm:w-auto flex items-center justify-center gap-x-2 rounded-lg bg-[#2B0001] px-4 py-2 text-white text-sm font-medium leading-normal border border-[#480001]"
         >
-          <span class="material-symbols-outlined text-base"></span>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"
@@ -148,7 +151,6 @@ const formatPrice = (value: any) => {
           <div
             class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-white"
           >
-            <span class="material-symbols-outlined text-base"></span>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
@@ -172,12 +174,14 @@ const formatPrice = (value: any) => {
         bg-[#2B0001] shadow-xl shadow-black/30 border border-[#4f0a0a]/40
         transition-all duration-300 group-hover:border-[#850000]/70"
               >
-                <div
-                  class="w-full h-full bg-center bg-cover 
+                <a href={`/product/${product.id}`}>
+                  <div
+                    class="w-full h-full bg-center bg-cover 
           transition-transform duration-300 ease-out group-hover:scale-110"
-                  style={`background-image: url('${product.image_url}');`}
-                  data-alt={product.product_name}
-                />
+                    style={`background-image: url('${product.image_url}');`}
+                    data-alt={product.product_name}
+                  />
+                </a>
 
                 {product.on_sale ? (
                   <div
@@ -234,21 +238,19 @@ const formatPrice = (value: any) => {
                     hover:bg-[#660000] hover:border-[#990000]/80
                     active:scale-[0.97] active:bg-[#850000]"
                   >
-                    <span class="material-symbols-outlined text-base">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                        class="icon icon-tabler icons-tabler-filled icon-tabler-garden-cart"
-                      >
-                        <>
-                          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                          <path d="M3.324 3a2 2 0 0 1 1.855 1.258l1.097 2.742h14.724a1 1 0 0 1 .94 1.341l-.046 .106l-2.934 5.871a3.5 3.5 0 1 1 -4.96 3.182l.005 -.192a3.5 3.5 0 0 1 .499 -1.618l-2.446 -.258l-3.446 4.75a2 2 0 0 1 -2.08 .762l-.154 -.044a2 2 0 0 1 -1.378 -1.9v-9.804l-1.679 -4.196h-1.321a1 1 0 0 1 -.993 -.883l-.007 -.117a1 1 0 0 1 1 -1zm14.176 13a1.5 1.5 0 1 0 0 3a1.5 1.5 0 0 0 0 -3m-10.5 -2.498l-.002 5.498l2.783 -3.833a5 5 0 0 1 -2.614 -1.474z" />
-                        </>
-                      </svg>{" "}
-                    </span>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      class="icon icon-tabler icons-tabler-filled icon-tabler-garden-cart"
+                    >
+                      <>
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M3.324 3a2 2 0 0 1 1.855 1.258l1.097 2.742h14.724a1 1 0 0 1 .94 1.341l-.046 .106l-2.934 5.871a3.5 3.5 0 1 1 -4.96 3.182l.005 -.192a3.5 3.5 0 0 1 .499 -1.618l-2.446 -.258l-3.446 4.75a2 2 0 0 1 -2.08 .762l-.154 -.044a2 2 0 0 1 -1.378 -1.9v-9.804l-1.679 -4.196h-1.321a1 1 0 0 1 -.993 -.883l-.007 -.117a1 1 0 0 1 1 -1zm14.176 13a1.5 1.5 0 1 0 0 3a1.5 1.5 0 0 0 0 -3m-10.5 -2.498l-.002 5.498l2.783 -3.833a5 5 0 0 1 -2.614 -1.474z" />
+                      </>
+                    </svg>{" "}
                     Agregar
                   </button>
 
