@@ -265,17 +265,28 @@ import BaseLayout from "../../layouts/Layout.astro";
   </main>
 </BaseLayout>
 
-<script type="module">
+<script>
+  import { getApiUrl } from "../../utils/keys/api_url";
+  const API_URL = getApiUrl();
+
   window.addEventListener("DOMContentLoaded", async () => {
-    const elItems = document.getElementById("cart-items");
-    const elTotal = document.getElementById("cart-total");
-    const btnClear = document.getElementById("checkout-clear");
-    const btnShowForm = document.getElementById("checkout-pay");
-    const btnSubmit = document.getElementById("submit-pay");
-    const payNote = document.getElementById("checkout-pay-note");
+    const elItems = document.getElementById("cart-items") as HTMLElement | null;
+    const elTotal = document.getElementById("cart-total") as HTMLElement | null;
+    const btnClear = document.getElementById(
+      "checkout-clear"
+    ) as HTMLElement | null;
+    const btnShowForm = document.getElementById(
+      "checkout-pay"
+    ) as HTMLElement | null;
+    const btnSubmit = document.getElementById(
+      "submit-pay"
+    ) as HTMLElement | null;
+    const payNote = document.getElementById(
+      "checkout-pay-note"
+    ) as HTMLElement | null;
     const formContainer = document.getElementById("checkout-form-container");
 
-    const formatPrice = (value) => {
+    const formatPrice = (value: any) => {
       const number = Number(value) || 0;
       return number.toLocaleString("es-CO", {
         style: "currency",
@@ -286,29 +297,53 @@ import BaseLayout from "../../layouts/Layout.astro";
 
     function renderCart() {
       if (!window.cartApi) {
-        elItems.innerHTML = '<p class="text-red-500">Carrito no disponible</p>';
+        if (elItems) {
+          elItems.innerHTML =
+            '<p class="text-red-500">Carrito no disponible</p>';
+        }
         return;
       }
 
       const cart = window.cartApi.getCart() || [];
-      const total = cart.reduce((s, i) => s + i.price * i.quantity, 0);
+      const total = cart.reduce(
+        (s: number, i: any) => s + i.price * i.quantity,
+        0
+      );
 
-      elTotal.textContent = formatPrice(total);
-      btnSubmit.textContent = `Pagar Ahora ${formatPrice(total)}`;
-      btnShowForm.textContent = `Pagar ${formatPrice(total)}`;
+      if (elTotal) {
+        elTotal.textContent = formatPrice(total);
+      }
+      if (btnSubmit) {
+        btnSubmit.textContent = `Pagar Ahora ${formatPrice(total)}`;
+      }
+      if (btnShowForm) {
+        btnShowForm.textContent = `Pagar ${formatPrice(total)}`;
+      }
 
       if (!cart.length) {
-        elItems.innerHTML =
-          '<p class="text-gray-600">Tu carrito está vacío</p>';
-        btnShowForm.disabled = true;
-        btnSubmit.disabled = true;
+        if (elItems) {
+          elItems.innerHTML =
+            '<p class="text-gray-600">Tu carrito está vacío</p>';
+        }
+        if (btnShowForm) {
+          btnShowForm.disabled = true;
+        }
+        if (btnSubmit) {
+          btnSubmit.disabled = true;
+        }
         return;
       }
 
-      btnShowForm.disabled = false;
-      btnSubmit.disabled = false;
+      if (btnShowForm) {
+        btnShowForm.disabled = false;
+      }
+      if (btnSubmit) {
+        btnSubmit.disabled = false;
+      }
 
-      elItems.innerHTML = "";
+      if (elItems) {
+        elItems.innerHTML = "";
+      }
       cart.forEach((item) => {
         const div = document.createElement("div");
         div.className = "flex items-center gap-4";
@@ -325,110 +360,132 @@ import BaseLayout from "../../layouts/Layout.astro";
               <button data-id="${item.id}" class="remove-btn cursor-pointer text-red-600">Eliminar</button>
             `;
 
-        elItems.appendChild(div);
+        elItems?.appendChild(div);
       });
 
       bindItemEvents();
     }
 
     function bindItemEvents() {
-      document.querySelectorAll(".remove-btn").forEach((btn) => {
-        btn.onclick = () => window.cartApi.removeItem(btn.dataset.id);
+      document.querySelectorAll(".remove-btn").forEach((element) => {
+        const btn = element as HTMLButtonElement;
+        btn.onclick = () => {
+          const id = btn.dataset.id;
+          if (id) window.cartApi?.removeItem(id);
+        };
       });
 
-      document.querySelectorAll(".qty-input").forEach((input) => {
+      document.querySelectorAll(".qty-input").forEach((element) => {
+        const input = element as HTMLInputElement;
         input.onchange = () => {
           const qty = Number(input.value);
-          if (qty <= 0) window.cartApi.removeItem(input.dataset.id);
-          else window.cartApi.updateQty(input.dataset.id, qty);
+          const id = input.dataset.id;
+          if (id) {
+            if (qty <= 0) window.cartApi?.removeItem(id);
+            else window.cartApi?.updateQty(id, qty);
+          }
         };
       });
     }
 
-    btnClear.onclick = () => {
-      window.cartApi.clearCart();
-      formContainer.classList.add("hidden");
-      renderCart();
-    };
+    if (btnClear) {
+      btnClear.onclick = () => {
+        window.cartApi?.clearCart();
+        formContainer?.classList.add("hidden");
+        renderCart();
+      };
+    }
 
-    btnShowForm.onclick = () => {
-      loadDataUserClerk();
-      if (!window.cartApi.getCount()) {
-        payNote.classList.remove("hidden");
-        return;
-      }
-      payNote.classList.add("hidden");
-      formContainer.classList.remove("hidden");
-      btnShowForm.disabled = true;
-    };
+    if (btnShowForm) {
+      btnShowForm.onclick = () => {
+        loadDataUserClerk();
+        if (!window.cartApi?.getCount()) {
+          payNote?.classList.remove("hidden");
+          return;
+        }
+        payNote?.classList.add("hidden");
+        formContainer?.classList.remove("hidden");
+        btnShowForm.disabled = true;
+      };
+    }
 
     function showModalWompi(
-      amount,
-      reference,
-      signature,
-      publicKey,
-      email,
-      name,
-      phone
+      amount: any,
+      reference: string,
+      signature: string,
+      publicKey: string,
+      email: string,
+      name: string,
+      phone: string
     ) {
       const modal = document.getElementById("modalPago");
       const btnClose = document.getElementById("cerrarModalBtn");
       const container = document.getElementById("wompi-container");
 
-      modal.style.display = "flex";
-      container.innerHTML = "";
+      if (modal) modal.style.display = "flex";
+      if (container) {
+        container.innerHTML = "";
 
-      const script = document.createElement("script");
-      script.src = "https://checkout.wompi.co/widget.js";
+        const script = document.createElement("script");
+        script.src = "https://checkout.wompi.co/widget.js";
 
-      script.setAttribute("data-render", "button");
-      script.setAttribute("data-public-key", publicKey);
-      script.setAttribute("data-currency", "COP");
-      script.setAttribute("data-amount-in-cents", amount);
-      script.setAttribute("data-reference", reference);
+        script.setAttribute("data-render", "button");
+        script.setAttribute("data-public-key", publicKey);
+        script.setAttribute("data-currency", "COP");
+        script.setAttribute("data-amount-in-cents", amount);
+        script.setAttribute("data-reference", reference);
 
-      // ✅ FIRMA OBLIGATORIA
-      script.setAttribute("data-signature:integrity", signature);
+        // ✅ FIRMA OBLIGATORIA
+        script.setAttribute("data-signature:integrity", signature);
 
-      // ✅ Datos del cliente
-      // script.setAttribute(
-      //   "data-customer-data",
-      //   JSON.stringify({
-      //     email: email,
-      //     full_name: name,
-      //     phone_number: phone,
-      //   })
-      // );
+        // ✅ Datos del cliente
+        // script.setAttribute(
+        //   "data-customer-data",
+        //   JSON.stringify({
+        //     email: email,
+        //     full_name: name,
+        //     phone_number: phone,
+        //   })
+        // );
 
-      script.setAttribute(
-        "data-redirect-url",
-        "https://jewelryfashionoficial.com/thanks"
-      );
+        script.setAttribute(
+          "data-redirect-url",
+          "https://jewelryfashionoficial.com/thanks"
+        );
 
-      container.appendChild(script);
+        container.appendChild(script);
+      }
     }
 
     function loadEventCloseModal() {
       const btnClose = document.getElementById("cerrarModalBtn");
-      btnClose.onclick = () => {
-        const modal = document.getElementById("modalPago");
-        modal.style.display = "none";
-      };
+      if (btnClose) {
+        btnClose.onclick = () => {
+          const modal = document.getElementById("modalPago");
+          if (modal) modal.style.display = "none";
+        };
+      }
     }
 
     async function loadDataUserClerk() {
       const user = await reloadClerkSession();
       if (!user) {
         alert("Por favor inicia sesión");
-        btnShowForm.disabled = false;
-        btnSubmit.disabled = false;
-        formContainer.classList.add("hidden");
+        if (btnShowForm) (btnShowForm as HTMLButtonElement).disabled = false;
+        if (btnSubmit) (btnSubmit as HTMLButtonElement).disabled = false;
+        formContainer?.classList.add("hidden");
         return;
       }
 
-      const buyerNameInput = document.getElementById("buyer-name");
-      const buyerEmailInput = document.getElementById("buyer-email");
-      const buyerPhoneInput = document.getElementById("buyer-phone");
+      const buyerNameInput = document.getElementById(
+        "buyer-name"
+      ) as HTMLInputElement | null;
+      const buyerEmailInput = document.getElementById(
+        "buyer-email"
+      ) as HTMLInputElement | null;
+      const buyerPhoneInput = document.getElementById(
+        "buyer-phone"
+      ) as HTMLInputElement | null;
 
       if (buyerNameInput && user.fullName) buyerNameInput.value = user.fullName;
 
@@ -443,53 +500,56 @@ import BaseLayout from "../../layouts/Layout.astro";
     }
 
     async function reloadClerkSession() {
-      await window.Clerk.load({
-        publishableKey: "pk_live_Y2xlcmsuamV3ZWxyeWZhc2hpb25vZmljaWFsLmNvbSQ",
-      });
+      await window.Clerk.load();
 
       return window.Clerk.user;
     }
 
     function initialPayment() {
-      const name = document.getElementById("buyer-name").value;
-      const email = document.getElementById("buyer-email").value;
-      const phone = document.getElementById("buyer-phone").value;
-      const identification = document.getElementById("buyer-id").value;
-      const city = document.getElementById("buyer-city").value;
-      const address = document.getElementById("buyer-address").value;
-      const apartment = document.getElementById("buyer-apartment").value;
+      const name = (document.getElementById("buyer-name") as HTMLInputElement)
+        .value;
+      const email = (document.getElementById("buyer-email") as HTMLInputElement)
+        .value;
+      const phone = (document.getElementById("buyer-phone") as HTMLInputElement)
+        .value;
+      const identification = (
+        document.getElementById("buyer-id") as HTMLInputElement
+      ).value;
+      const city = (document.getElementById("buyer-city") as HTMLInputElement)
+        .value;
+      const address = (
+        document.getElementById("buyer-address") as HTMLInputElement
+      ).value;
+      const apartment = (
+        document.getElementById("buyer-apartment") as HTMLInputElement
+      ).value;
 
       if (!name || !email || !phone || !identification || !city || !address) {
         alert("Completa todos los datos requeridos");
-        document.getElementById("full-screen-loader").classList.add("hidden");
+        document.getElementById("full-screen-loader")?.classList.add("hidden");
         return;
       }
-      const cart = window.cartApi.getCart();
+      const cart = window.cartApi?.getCart() || [];
       const products = cart.map((item) => ({
         name: item.name,
         quantity: item.quantity,
         price: item.price,
       }));
 
-      // NOTE: We are sending the new fields in the body for the backend to use.
-      // The backend needs to support receiving these new fields: identification, city, address, apartment.
-      fetch(
-        `https://admin.jewelryfashionoficial.com/wp-json/custom-api/v1/api-json/v1/create-payment`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            name,
-            email,
-            phone,
-            identification,
-            city,
-            address_1: address,
-            apartment,
-            products,
-          }),
-        }
-      )
+      fetch(`${API_URL}/create-payment`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name,
+          email,
+          phone,
+          identification,
+          city,
+          address_1: address,
+          apartment,
+          products,
+        }),
+      })
         .then((res) => res.json())
         .then((data) => {
           if (!data.success) {
@@ -506,24 +566,32 @@ import BaseLayout from "../../layouts/Layout.astro";
             phone
           );
           loadEventCloseModal();
-          document.getElementById("full-screen-loader").classList.add("hidden");
+          document
+            .getElementById("full-screen-loader")
+            ?.classList.add("hidden");
         })
         .catch((err) => {
           alert("Error creando la orden");
-          document.getElementById("full-screen-loader").classList.add("hidden");
+          document
+            .getElementById("full-screen-loader")
+            ?.classList.add("hidden");
         });
     }
 
-    btnSubmit.onclick = async () => {
-      document.getElementById("full-screen-loader").classList.remove("hidden");
-      const user = await reloadClerkSession();
-      if (!user) {
-        alert("Debes iniciar sesión para pagar");
-        return;
-      }
-      if (!window.cartApi.getCount()) return alert("Carrito vacío");
-      initialPayment();
-    };
+    if (btnSubmit) {
+      btnSubmit.onclick = async () => {
+        document
+          .getElementById("full-screen-loader")
+          ?.classList.remove("hidden");
+        const user = await reloadClerkSession();
+        if (!user) {
+          alert("Debes iniciar sesión para pagar");
+          return;
+        }
+        if (!window.cartApi?.getCount()) return alert("Carrito vacío");
+        initialPayment();
+      };
+    }
 
     window.addEventListener("cartchange", renderCart);
     renderCart();

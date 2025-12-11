@@ -9,9 +9,6 @@ export default defineConfig({
     plugins: [tailwindcss()],
   },
   integrations: [clerk(), react()],
-  output: "static",
-  build: {
-    inlineStylesheets: "never"
-  }
+  output: "static"
 });
 

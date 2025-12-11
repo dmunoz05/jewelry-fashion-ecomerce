@@ -99,13 +99,6 @@ body {
   color: rgb(248 245 245 / var(--tw-text-opacity, 1));
 }
 
-.material-symbols-outlined {
-  font-variation-settings:
-    "FILL" 0,
-    "wght" 400,
-    "GRAD" 0,
-    "opsz" 24;
-}
 /* Ocultar barra de scroll en navegadores modernos */
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
