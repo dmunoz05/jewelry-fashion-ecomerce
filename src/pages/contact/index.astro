@@ -132,7 +132,8 @@ import BaseLayout from "../../layouts/Layout.astro";
   ) as HTMLButtonElement;
 
   // API endpoint
-  const API_URL = `https://admin.jewelryfashionoficial.com/wp-json/custom-api/v1/api-json/v1/send/mail`;
+  import { getApiUrl } from "../../utils/keys/api_url";
+  const API_ENDPOINT = `${getApiUrl()}/send/mail`;
 
   // Handle form submission
   form.addEventListener("submit", async (e) => {
@@ -140,10 +141,10 @@ import BaseLayout from "../../layouts/Layout.astro";
 
     // Get form values
     const formData = new FormData(form);
-    const nombre = formData.get("name") as string;
-    const email = formData.get("email") as string;
-    const asunto = formData.get("subject") as string;
-    const mensaje = formData.get("message") as string;
+    const nombre = formData.get("name");
+    const email = formData.get("email");
+    const asunto = formData.get("subject");
+    const mensaje = formData.get("message");
 
     // Prepare request body
     const requestBody = {
@@ -160,7 +161,7 @@ import BaseLayout from "../../layouts/Layout.astro";
 
     try {
       // Send request to API
-      const response = await fetch(API_URL, {
+      const response = await fetch(API_ENDPOINT, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
