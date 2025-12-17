@@ -1,12 +1,6 @@
 ---
-Astro.response.headers.set(
-  "Cache-Control",
-  "public, max-age=300, s-maxage=3600"
-);
-
 import BaseLayout from "../../layouts/Layout.astro";
 
-// 1. GENERAR RUTAS ESTÁTICAS
 export async function getStaticPaths() {
   function generateRandomNumber() {
     return Math.floor(Math.random() * 100000) + Date.now();
@@ -24,53 +18,9 @@ export async function getStaticPaths() {
       params: { id: product.id.toString() },
     }));
   } catch (error) {
-    console.log("Error obteniendo productos:", error);
     return [];
   }
 }
-
-// 2. OBTENER ID DE LA URL
-const { id } = Astro.params;
-
-// 3. PRODUCTO SELECCIONADO
-let productSelected = null;
-let productsRelationShip = [];
-const API_URL = import.meta.env.PUBLIC_API_URL;
-
-function generateRandomNumber() {
-  return Math.floor(Math.random() * 100000) + Date.now();
-}
-
-try {
-  const response = await fetch(
-    `${API_URL}/product_exists/${id}?nocache=${generateRandomNumber()}`
-  );
-  const data = await response.json();
-  productSelected = data[0] || null;
-} catch (error) {
-  console.log("Error loading product:", error);
-}
-
-// 4. PRODUCTOS RELACIONADOS
-try {
-  const response = await fetch(
-    `${API_URL}/get_products/home/?nocache=${generateRandomNumber()}`
-  );
-  const allProducts = await response.json();
-
-  productsRelationShip = allProducts.filter((p: any) => p.id.toString() !== id);
-} catch (error) {
-  console.log("Error loading related products:", error);
-}
-
-const formatPrice = (value: any) => {
-  const number = Number(value) || 0;
-  return number.toLocaleString("es-CO", {
-    style: "currency",
-    currency: "COP",
-    minimumFractionDigits: 0,
-  });
-};
 ---
 
 <BaseLayout>
@@ -85,7 +35,7 @@ const formatPrice = (value: any) => {
           <div
             id="main-image-container"
             class="relative w-full aspect-square bg-center bg-no-repeat bg-cover rounded-xl bg-bg-accent-darker transition-all duration-300"
-            style={`background-image: url('${productSelected?.image_url || ""}')`}
+            style="background-image: none"
           >
             <button
               id="zoom-btn"
@@ -112,123 +62,54 @@ const formatPrice = (value: any) => {
           </div>
 
           <!-- Miniaturas dinámicas (si la API las trae) -->
-          {
-            productSelected?.gallery?.length > 0 ? (
-              <div class="grid grid-cols-4 gap-3">
-                {productSelected.gallery.map((img: string) => (
-                  <div
-                    class="gallery-thumb w-full aspect-square bg-center bg-no-repeat bg-cover rounded-lg bg-bg-accent-darker cursor-pointer hover:opacity-80 transition ring-2 ring-transparent hover:ring-primary"
-                    style={`background-image: url('${img}')`}
-                  />
-                ))}
-              </div>
-            ) : null
-          }
+          <div id="gallery-thumbs" class="grid grid-cols-4 gap-3"></div>
         </div>
 
         <!-- 📄 Información del producto -->
         <div class="flex flex-col gap-5">
           <!-- Título -->
           <div class="flex flex-col gap-1.5 border-b border-white/10 pb-4">
-            <p class="text-gray-400 text-xs uppercase tracking-widest">
-              {productSelected?.material || "Material desconocido"}
+            <p
+              id="product-material"
+              class="text-gray-400 text-xs uppercase tracking-widest"
+            >
+              Cargando...
             </p>
 
             <h1
+              id="product-name"
               class="text-white text-2xl md:text-3xl font-semibold leading-tight"
             >
-              {productSelected?.product_name || "Producto no encontrado"}
+              Cargando...
             </h1>
           </div>
 
           <!-- Descripción -->
           <div class="text-gray-300 text-sm leading-relaxed">
-            <p>
-              {
-                productSelected?.description ||
-                  "No hay descripción disponible para este producto."
-              }
-            </p>
+            <p id="product-description">Cargando descripción...</p>
           </div>
 
           <!-- 📏 Medidas -->
           <div>
             <h3 class="text-white font-semibold mb-2">Medidas:</h3>
 
-            <ul class="list-disc list-inside text-gray-400 text-sm space-y-1">
-              {
-                productSelected?.measures?.length ? (
-                  productSelected.measures.map((m: any) => <li>{m}</li>)
-                ) : (
-                  <>
-                    <li>Diámetro interno: {productSelected?.diametro || ""}</li>
-                    <li>Grosor: {productSelected?.grosor || ""}</li>
-                    <li>
-                      Descripción Material:{" "}
-                      {productSelected?.descripcion_material || ""}
-                    </li>
-                  </>
-                )
-              }
+            <ul
+              id="product-measures"
+              class="list-disc list-inside text-gray-400 text-sm space-y-1"
+            >
             </ul>
           </div>
 
           <!-- 💰 Precios -->
-          <div class="flex items-center align-center gap-3">
-            <!-- Si no tiene descuento -->
-            {
-              productSelected?.discount ? (
-                <>
-                  <p class="text-white text-3xl font-bold">
-                    {formatPrice(
-                      productSelected?.price - productSelected?.discount
-                    )}
-                  </p>
-                  <p class="text-gray-500 text-lg font-normal line-through">
-                    {formatPrice(productSelected?.price)}
-                  </p>
-                </>
-              ) : (
-                <p class="text-white text-3xl font-bold">
-                  {formatPrice(productSelected?.price)}
-                </p>
-              )
-            }
-
-            {
-              productSelected?.discount ? (
-                <span class="bg-primary text-white text-xs font-bold px-2.5 py-1 rounded-full">
-                  {productSelected.discount}% OFF
-                </span>
-              ) : null
-            }
+          <div id="product-price" class="flex items-center align-center gap-3">
           </div>
 
           <!-- 🛒 Botones -->
-          <div class="flex flex-col gap-2.5">
+          <div id="product-buttons" class="flex flex-col gap-2.5">
             <button
               id="add-to-cart-btn"
-              data-product={encodeURIComponent(
-                JSON.stringify(productSelected || {})
-              )}
-              class="flex w-full items-center cursor-pointer justify-center gap-x-2 rounded-lg bg-primary hover:bg-primary-darker px-4 py-3 text-white text-base font-bold transition-colors"
+              class="flex cursor-pointer w-full items-center justify-center gap-x-2 rounded-lg bg-primary px-4 py-3 text-white font-bold"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="icon icon-tabler icons-tabler-outline icon-tabler-shopping-bag-plus"
-                ><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path
-                  d="M12.5 21h-3.926a3 3 0 0 1 -2.965 -2.544l-1.255 -8.152a2 2 0 0 1 1.977 -2.304h11.339a2 2 0 0 1 1.977 2.304l-.263 1.708"
-                ></path><path d="M16 19h6"></path><path d="M19 16v6"
-                ></path><path d="M9 11v-5a3 3 0 0 1 6 0v5"></path></svg
-              >
               Agregar al carrito
             </button>
           </div>
@@ -240,27 +121,10 @@ const formatPrice = (value: any) => {
           Productos Relacionados
         </h2>
 
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {
-            productsRelationShip.map((product: any) => (
-              <div class="flex flex-col gap-3">
-                <a
-                  href={`/product/${product.id}`}
-                  class="relative cursor-pointer w-full bg-center bg-no-repeat aspect-square bg-cover rounded-xl bg-bg-accent-darker"
-                  style={`background-image: url("${product.image_url}");`}
-                />
-                <div class="flex flex-col gap-1">
-                  <p class="text-white text-sm font-semibold leading-tight">
-                    {product.name}
-                  </p>
-                  <p class="text-gray-400 text-xs">{product.material}</p>
-                  <p class="text-white text-sm font-bold mt-1">
-                    {formatPrice(product.price)}
-                  </p>
-                </div>
-              </div>
-            ))
-          }
+        <div
+          id="related-products"
+          class="grid grid-cols-2 md:grid-cols-4 gap-4"
+        >
         </div>
       </div>
     </main>
@@ -304,136 +168,271 @@ const formatPrice = (value: any) => {
   </div>
 </BaseLayout>
 
-<script type="module">
-  window.addEventListener("DOMContentLoaded", () => {
-    // --- LÓGICA DEL CARRITO (EXISTENTE) ---
-    try {
-      const btn = document.getElementById("add-to-cart-btn");
-      if (btn) {
-        const raw = btn.getAttribute("data-product") || "";
-        let product = {};
-        try {
-          product = JSON.parse(decodeURIComponent(raw));
-        } catch (e) {
-          product = {};
-        }
-        const payload = {
-          id: String(
-            product?.id ?? product?.product_id ?? product?.sku ?? "unknown"
-          ),
-          name: String(product.product_name ?? product.name ?? ""),
-          price: Number(product.price ?? 0),
-          image: product.image_url ?? product.image ?? "",
-          quantity: 1,
-        };
-        btn.addEventListener("click", function () {
-          if (window.cartApi && typeof window.cartApi.addItem === "function") {
-            window.cartApi.addItem(payload);
-            const original = btn.innerHTML;
-            btn.textContent = "Añadido";
-            setTimeout(() => {
-              btn.innerHTML = original;
-            }, 900);
-          } else {
-            alert("cartApi not available");
-          }
-        });
-      }
-    } catch (e) {
-      alert(e);
+<script>
+  import { getApiUrl } from "../../utils/keys/api_url";
+  const API_URL = getApiUrl();
+
+  interface Product {
+    id: string;
+    product_name: string;
+    category_id: string;
+    price: string;
+    product_link: string;
+    description: string;
+    discount: string;
+    diametro: string;
+    grosor: string;
+    material: string;
+    descripcion_material: string;
+    image_id: string;
+    image_url: string;
+    created_at: string;
+  }
+
+  window.addEventListener("DOMContentLoaded", function () {
+    function generateRandomNumber() {
+      return Math.floor(Math.random() * 100000) + Date.now();
     }
 
-    // --- LÓGICA DE GALERÍA Y ZOOM ---
-    const mainImage = document.getElementById("main-image-container");
-    const zoomBtn = document.getElementById("zoom-btn");
-    const modal = document.getElementById("image-modal");
-    const modalImg = document.getElementById("modal-img");
-    const closeBtn = document.getElementById("modal-close");
-    const thumbs = document.querySelectorAll(".gallery-thumb");
-
-    // 1. Cambiar imagen principal al hacer click en miniaturas
-    thumbs.forEach((thumb) => {
-      thumb.addEventListener("click", () => {
-        const bg = thumb.style.backgroundImage;
-        if (mainImage) mainImage.style.backgroundImage = bg;
+    function formatPrice(value: Number) {
+      var n = Number(value) || 0;
+      return n.toLocaleString("es-CO", {
+        style: "currency",
+        currency: "COP",
+        minimumFractionDigits: 0,
       });
-    });
+    }
 
-    // 2. Abrir Modalf
-    if (zoomBtn && mainImage && modal && modalImg) {
-      zoomBtn.addEventListener("click", () => {
-        const style = window.getComputedStyle(mainImage);
-        let bg = style.backgroundImage;
-        // Limpiar url("...") para obtener solo la URL
-        // bg suele ser: url("https://...")
-        if (bg.startsWith('url("')) {
-          bg = bg.slice(5, -2);
-        } else if (bg.startsWith("url('")) {
-          bg = bg.slice(5, -2);
-        } else if (bg.startsWith("url(")) {
-          bg = bg.slice(4, -1);
-        }
+    function initZoom() {
+      var mainImage = document.getElementById(
+        "main-image-container"
+      ) as HTMLDivElement;
+      var zoomBtn = document.getElementById("zoom-btn") as HTMLButtonElement;
+      var modal = document.getElementById("image-modal") as HTMLDivElement;
+      var modalImg = document.getElementById("modal-img") as HTMLImageElement;
+      var closeBtn = document.getElementById(
+        "modal-close"
+      ) as HTMLButtonElement;
+
+      if (!mainImage || !zoomBtn || !modal || !modalImg) return;
+
+      // --- Abrir modal ---
+      zoomBtn.onclick = function () {
+        var style = window.getComputedStyle(mainImage);
+        var bg = style.backgroundImage;
+
+        if (!bg || bg === "none") return;
+
+        // limpiar url("...")
+        bg = bg.replace(/^url\(["']?/, "").replace(/["']?\)$/, "");
 
         modalImg.src = bg;
         modal.classList.remove("hidden");
-        // Pequeño delay para permitir que el navegador renderice antes de la transición de opacidad
-        requestAnimationFrame(() => {
+
+        requestAnimationFrame(function () {
           modal.classList.remove("opacity-0");
         });
-      });
-    }
+      };
 
-    // 3. Cerrar Modal
-    const closeModal = () => {
-      if (!modal) return;
-      modal.classList.add("opacity-0");
-      setTimeout(() => {
-        modal.classList.add("hidden");
-        resetZoom();
-      }, 300);
-    };
+      // --- Cerrar modal ---
+      function closeModal() {
+        modal.classList.add("opacity-0");
+        setTimeout(function () {
+          modal.classList.add("hidden");
+          resetZoom();
+        }, 300);
+      }
 
-    if (closeBtn) closeBtn.addEventListener("click", closeModal);
-    if (modal) {
-      modal.addEventListener("click", (e) => {
+      if (closeBtn) closeBtn.onclick = closeModal;
+
+      modal.onclick = function (e) {
         if (e.target === modal) closeModal();
-      });
-    }
+      };
 
-    // 4. Zoom en el Modal
-    let isZoomed = false;
+      // --- Zoom interno ---
+      var isZoomed = false;
 
-    function resetZoom() {
-      if (!modalImg) return;
-      isZoomed = false;
-      modalImg.style.transform = "scale(1)";
-      modalImg.style.transformOrigin = "center center";
-      modalImg.classList.remove("cursor-zoom-out");
-      modalImg.classList.add("cursor-zoom-in");
-    }
+      function resetZoom() {
+        isZoomed = false;
+        modalImg.style.transform = "scale(1)";
+        modalImg.style.transformOrigin = "center center";
+        modalImg.classList.remove("cursor-zoom-out");
+        modalImg.classList.add("cursor-zoom-in");
+      }
 
-    if (modalImg) {
-      modalImg.addEventListener("click", (e) => {
-        e.stopPropagation(); // Evitar cerrar el modal
+      modalImg.onclick = function (e) {
+        e.stopPropagation();
         if (isZoomed) {
           resetZoom();
         } else {
           isZoomed = true;
           modalImg.style.transform = "scale(2)";
-          modalImg.classList.add("cursor-zoom-out");
           modalImg.classList.remove("cursor-zoom-in");
+          modalImg.classList.add("cursor-zoom-out");
         }
-      });
+      };
 
-      modalImg.addEventListener("mousemove", (e) => {
+      modalImg.onmousemove = function (e) {
         if (!isZoomed) return;
-        const rect = modalImg.getBoundingClientRect();
-        // Calcular posición relativa del mouse dentro de la imagen
-        const x = (e.clientX - rect.left) / rect.width;
-        const y = (e.clientY - rect.top) / rect.height;
-
-        modalImg.style.transformOrigin = `${x * 100}% ${y * 100}%`;
-      });
+        var rect = modalImg.getBoundingClientRect();
+        var x = (e.clientX - rect.left) / rect.width;
+        var y = (e.clientY - rect.top) / rect.height;
+        modalImg.style.transformOrigin = x * 100 + "% " + y * 100 + "%";
+      };
     }
+
+    // =========================
+    // Obtener ID desde la URL
+    // =========================
+    var parts = window.location.pathname.split("/").filter(Boolean);
+    var productId = parts[parts.length - 1];
+    if (!productId) return;
+
+    // =========================
+    // Render producto
+    // =========================
+    function renderProduct(product: Product) {
+      if (!product) return;
+
+      var nameEl = document.getElementById("product-name");
+      if (nameEl) nameEl.textContent = product.product_name || "";
+
+      var materialEl = document.getElementById("product-material");
+      if (materialEl) materialEl.textContent = product.material || "";
+
+      var descEl = document.getElementById("product-description");
+      if (descEl) descEl.textContent = product.description || "";
+
+      var mainImage = document.getElementById("main-image-container");
+      if (mainImage) {
+        mainImage.style.backgroundImage = "url('" + product.image_url + "')";
+      }
+
+      // ===== Galería (no existe en tu API, se omite con seguridad)
+      var galleryEl = document.getElementById("gallery-thumbs");
+      if (galleryEl) galleryEl.innerHTML = "";
+
+      // ===== Medidas
+      var measuresEl = document.getElementById("product-measures");
+      if (measuresEl) {
+        measuresEl.innerHTML =
+          "<li>Diámetro: " +
+          (product.diametro || "") +
+          "</li>" +
+          "<li>Grosor: " +
+          (product.grosor || "") +
+          "</li>" +
+          "<li>" +
+          (product.descripcion_material || "") +
+          "</li>";
+      }
+
+      // ===== Precio
+      var priceEl = document.getElementById("product-price");
+      var discount = Number(product.discount) || 0;
+      var price = Number(product.price) || 0;
+
+      if (priceEl) {
+        if (discount > 0) {
+          priceEl.innerHTML =
+            '<p class="text-white text-3xl font-bold">' +
+            formatPrice(price - discount) +
+            "</p>" +
+            '<p class="text-gray-500 line-through">' +
+            formatPrice(price) +
+            "</p>";
+        } else {
+          priceEl.innerHTML =
+            '<p class="text-white text-3xl font-bold">' +
+            formatPrice(price) +
+            "</p>";
+        }
+      }
+
+      // ===== Carrito
+      var btn = document.getElementById("add-to-cart-btn");
+      if (btn) {
+        btn.onclick = function () {
+          if (window.cartApi && window.cartApi.addItem && btn) {
+            window.cartApi.addItem({
+              id: String(product.id),
+              name: product.product_name,
+              price: price,
+              image: product.image_url,
+              quantity: 1,
+            });
+            btn.textContent = "Añadido";
+            btn.style.cursor = "not-allowed";
+            setTimeout(function () {
+              if (!btn) return;
+              btn.textContent = "Agregar al carrito";
+            }, 900);
+          }
+        };
+      }
+    }
+
+    // =========================
+    // Cargar producto
+    // =========================
+    fetch(
+      API_URL +
+        "/product_exists/" +
+        productId +
+        "?nocache=" +
+        generateRandomNumber()
+    )
+      .then(function (res) {
+        return res.json();
+      })
+      .then(function (data) {
+        var product = data && data[0] ? data[0] : null;
+        renderProduct(product);
+        initZoom();
+      })
+      .catch(function (err) {
+        return null;
+      });
+
+    // =========================
+    // Relacionados
+    // =========================
+    fetch(API_URL + "/get_products/home/")
+      .then(function (res) {
+        return res.json();
+      })
+      .then(function (all) {
+        var related = all.filter(function (p: Product) {
+          return String(p.id) !== String(productId);
+        });
+
+        var relEl = document.getElementById("related-products");
+        if (!relEl) return;
+
+        relEl.innerHTML = related
+          .slice(0, 4)
+          .map(function (p: Product) {
+            return (
+              '<div class="flex flex-col gap-3">' +
+              '<a href="/product/' +
+              p.id +
+              '" class="w-full aspect-square bg-cover bg-center rounded-xl" style="background-image:url(\'' +
+              p.image_url +
+              "')\"></a>" +
+              '<p class="text-white text-sm font-semibold">' +
+              p.product_name +
+              "</p>" +
+              '<p class="text-gray-400 text-xs">' +
+              (p.material || "") +
+              "</p>" +
+              '<p class="text-white text-sm font-bold">' +
+              formatPrice(Number(p.price)) +
+              "</p>" +
+              "</div>"
+            );
+          })
+          .join("");
+      })
+      .catch(function () {});
   });
 </script>
