@@ -1,9 +1,4 @@
 ---
-Astro.response.headers.set(
-  "Cache-Control",
-  "public, max-age=300, s-maxage=3600"
-);
-
 import BaseLayout from "../../layouts/Layout.astro";
 
 export async function getStaticPaths() {
@@ -24,51 +19,9 @@ export async function getStaticPaths() {
       params: { id: String(cat.id) },
     }));
   } catch (error) {
-    console.log("Error cargando categorías:", error);
     return [];
   }
 }
-
-const { id } = Astro.params;
-// ------------------------------------------------
-
-// Cargar productos por categoría
-let products = [];
-const API_URL = import.meta.env.PUBLIC_API_URL;
-
-try {
-  const response = await fetch(`${API_URL}/get_products_by_category/${id}`);
-  products = await response.json();
-} catch (error) {
-  console.log("Error al cargar productos por categoría:", error);
-}
-
-// Cargar categorías para menú
-let categories = [];
-
-function generateRandomNumber() {
-  return Math.floor(Math.random() * 100000);
-}
-
-try {
-  const response = await fetch(
-    `${API_URL}/get_categories/?nocache=${generateRandomNumber()}`
-  );
-  categories = await response.json();
-} catch (err) {
-  console.log("Error loading categories:", err);
-}
-
-let nameCategory = categories.find((cat: any) => Number(cat.id) === Number(id));
-
-const formatPrice = (value: any) => {
-  const number = Number(value) || 0;
-  return number.toLocaleString("es-CO", {
-    style: "currency",
-    currency: "COP",
-    minimumFractionDigits: 0,
-  });
-};
 ---
 
 <BaseLayout>
@@ -77,41 +30,102 @@ const formatPrice = (value: any) => {
   >
     <div
       class="absolute inset-0 bg-cover bg-center bg-no-repeat"
-      style="background-image: url('https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?q=80&w=2070&auto=format&fit=crop');"
+      style="background-image: url('/categories.jpeg');"
     >
       <div class="absolute inset-0 bg-black/50"></div>
       <div
         class="relative w-full h-[40vh] min-h-[300px] flex items-center justify-center overflow-hidden"
       >
         <h1
+          id="category-title"
           class="relative z-10 text-4xl md:text-6xl font-bold text-white text-center tracking-tight drop-shadow-2xl px-4"
         >
-          {nameCategory.name}
+          Cargando...
         </h1>
       </div>
     </div>
   </div>
-  <nav class="relative bg-gray-900 pb-7 p-9 text-white">
+
+  <nav class="bg-gray-900 pb-7 p-9 text-white">
+    <!-- Menú -->
+    <!-- CONTENEDOR COMPLETO -->
     <div class="relative md:static w-full">
-      <div
-        class="hidden md:flex md:flex-row md:space-x-12 md:justify-center md:items-center
-        md:text-xs md:font-medium md:tracking-widest relative"
+      <!-- Flecha izquierda -->
+      <button
+        id="cat-left"
+        class="absolute left-2 top-1/2 -translate-y-1/2 bg-gray-800/80 text-white p-2 rounded-full shadow-md
+           md:hidden z-20"
       >
-        {
-          categories.map((item: any) => (
-            <div x-data="{ open:false }" class="relative">
-              <a
-                href={`/category/${item.id}`}
-                class="hover:text-primary transition-colors cursor-pointer"
-              >
-                {item.name}
-              </a>
-            </div>
-          ))
-        }
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-left"
+          ><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path
+            d="M15 6l-6 6l6 6"></path></svg
+        >
+      </button>
+
+      <!-- CARRUSEL -->
+      <div
+        id="carousel-container"
+        class="flex md:hidden justify-center items-center w-full overflow-hidden py-2"
+      >
+        <div
+          id="carousel-item"
+          class="text-white text-sm font-medium tracking-widest"
+        >
+          <!-- Aquí se cargará dinámicamente cada categoría -->
+        </div>
+      </div>
+
+      <!-- Flecha derecha -->
+      <button
+        id="cat-right"
+        class="absolute right-2 top-1/2 -translate-y-1/2 bg-gray-800/80 text-white p-2 rounded-full shadow-md
+           md:hidden z-20"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-right"
+          ><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path
+            d="M9 6l6 6l-6 6"></path></svg
+        >
+      </button>
+
+      <div
+        id="list-categories"
+        class="hidden md:flex md:flex-row md:space-x-12 md:justify-center md:items-center
+     md:text-xs md:font-medium md:tracking-widest relative"
+      >
       </div>
     </div>
   </nav>
+
+  <!-- <nav class="relative bg-gray-900 pb-7 p-9 text-white">
+    <div class="relative md:static w-full">
+      <div
+        id="categories-menu"
+        class="hidden md:flex md:flex-row md:space-x-12 md:justify-center md:items-center
+        md:text-xs md:font-medium md:tracking-widest relative"
+      >
+      </div>
+    </div>
+  </nav> -->
 
   <div
     class="relative flex h-auto min-h-screen w-full flex-col bg-background-light dark:bg-[#000000] group/design-root overflow-x-hidden"
@@ -165,111 +179,12 @@ const formatPrice = (value: any) => {
           </div>
         </div>
       </div>
-      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 py-6">
-        {
-          products.map((product: any) => (
-            <div class="flex flex-col gap-4 group">
-              <div
-                class="relative w-full aspect-square rounded-2xl overflow-hidden 
-        bg-[#2B0001] shadow-xl shadow-black/30 border border-[#4f0a0a]/40
-        transition-all duration-300 group-hover:border-[#850000]/70"
-              >
-                <a href={`/product/${product.id}`}>
-                  <div
-                    class="w-full h-full bg-center bg-cover 
-          transition-transform duration-300 ease-out group-hover:scale-110"
-                    style={`background-image: url('${product.image_url}');`}
-                    data-alt={product.product_name}
-                  />
-                </a>
 
-                {product.on_sale ? (
-                  <div
-                    class="absolute top-2 left-2 
-          bg-[#850000] text-white text-[10px] font-bold px-2 py-0.5 rounded-full 
-          shadow-md shadow-black/40 border border-white/10"
-                  >
-                    OFERTA
-                  </div>
-                ) : null}
-              </div>
-
-              <div>
-                <div class="flex items-center gap-2 flex justify-between">
-                  <p class="text-white text-xl font-semibold tracking-wide">
-                    {product.product_name}
-                  </p>
-
-                  <a
-                    href={"/product/" + product.id}
-                    class="hidden md:flex items-center justify-center 
-      rounded-lg border border-[#550000]/40 bg-[#4A0001]
-      px-3 py-1.5 text-[11px] font-bold text-white tracking-wide
-      transition-all duration-300
-      hover:bg-[#850000] hover:border-[#A40000]/80
-      active:scale-[0.97]"
-                  >
-                    Ver
-                  </a>
-                </div>
-
-                <div class="flex items-center gap-2 flex-wrap">
-                  <p class="text-[#D4B8B8] text-sm font-bold">
-                    {formatPrice(product.price)}
-                  </p>
-
-                  {product.on_sale ? (
-                    <p class="text-gray-600 text-xs line-through">
-                      {formatPrice(product.regular_price)}
-                    </p>
-                  ) : null}
-                </div>
-
-                <div class="flex flex-col gap-2 mt-1">
-                  <button
-                    id={`add-to-cart-btn-${product.id}`}
-                    data-product={encodeURIComponent(
-                      JSON.stringify(product || {})
-                    )}
-                    class="flex cursor-pointer w-full items-center justify-center gap-x-2
-                    rounded-xl border border-[#660000]/40 bg-[#3A0001] 
-                    px-3 py-2 text-white text-xs font-bold tracking-wide
-                    transition-all duration-300
-                    hover:bg-[#660000] hover:border-[#990000]/80
-                    active:scale-[0.97] active:bg-[#850000]"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
-                      class="icon icon-tabler icons-tabler-filled icon-tabler-garden-cart"
-                    >
-                      <>
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                        <path d="M3.324 3a2 2 0 0 1 1.855 1.258l1.097 2.742h14.724a1 1 0 0 1 .94 1.341l-.046 .106l-2.934 5.871a3.5 3.5 0 1 1 -4.96 3.182l.005 -.192a3.5 3.5 0 0 1 .499 -1.618l-2.446 -.258l-3.446 4.75a2 2 0 0 1 -2.08 .762l-.154 -.044a2 2 0 0 1 -1.378 -1.9v-9.804l-1.679 -4.196h-1.321a1 1 0 0 1 -.993 -.883l-.007 -.117a1 1 0 0 1 1 -1zm14.176 13a1.5 1.5 0 1 0 0 3a1.5 1.5 0 0 0 0 -3m-10.5 -2.498l-.002 5.498l2.783 -3.833a5 5 0 0 1 -2.614 -1.474z" />
-                      </>
-                    </svg>{" "}
-                    Agregar
-                  </button>
-
-                  <a
-                    href={"/product/" + product.id}
-                    class="hidden md:flex w-full items-center justify-center gap-x-2 
-                      rounded-xl border border-[#550000]/40 bg-[#4A0001]
-                      px-3 py-2 text-xs font-bold text-white tracking-wide
-                      transition-all duration-300
-                      hover:bg-[#850000] hover:border-[#A40000]/80
-                      active:scale-[0.97]"
-                  >
-                    Ver producto
-                  </a>
-                </div>
-              </div>
-            </div>
-          ))
-        }
+      <!-- Productos por categoria -->
+      <div
+        id="products-grid"
+        class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 py-6"
+      >
       </div>
 
       <div class="flex items-center justify-between gap-4 py-4 text-white">
@@ -318,93 +233,309 @@ const formatPrice = (value: any) => {
   </div>
 </BaseLayout>
 
-<script type="module">
-  window.addEventListener("DOMContentLoaded", () => {
+<!-- Cargar producto específico -->
+<script>
+  import { getApiUrl } from "../../utils/keys/api_url";
+  const API_URL = getApiUrl();
+
+  interface Product {
+    id: string;
+    product_name: string;
+    category_id: string;
+    price: string;
+    product_link: string;
+    description: string;
+    discount: string;
+    diametro: string;
+    grosor: string;
+    material: string;
+    descripcion_material: string;
+    image_id: string;
+    image_url: string;
+    created_at: string;
+  }
+
+  document.addEventListener("DOMContentLoaded", async () => {
+    // ==========================
+    // 1. Obtener ID desde la URL
+    // ==========================
+    const pathParts = window.location.pathname.split("/").filter(Boolean);
+    const categoryId = pathParts[pathParts.length - 1];
+
+    if (!categoryId) {
+      return;
+    }
+
+    // ==========================
+    // Helpers
+    // ==========================
+    const formatPrice = (value: any) => {
+      const number = Number(value) || 0;
+      return number.toLocaleString("es-CO", {
+        style: "currency",
+        currency: "COP",
+        minimumFractionDigits: 0,
+      });
+    };
+
+    // ==========================
+    // 2. Cargar categorías
+    // ==========================
+    let categories = [];
+    try {
+      const res = await fetch(`${API_URL}/get_categories/`);
+      categories = await res.json();
+    } catch (err) {
+      return;
+    }
+
+    // Título categoría
+    const currentCategory = categories.find(
+      (c: any) => String(c.id) === String(categoryId)
+    );
+    const titleEl = document.getElementById("category-title");
+    if (currentCategory && titleEl) {
+      titleEl.textContent = currentCategory.name;
+    }
+
+    // Menú categorías
+    const menuEl = document.getElementById("categories-menu");
+    if (menuEl) {
+      menuEl.innerHTML = categories
+        .map(
+          (cat: any) => `
+          <a
+            href="/category/${cat.id}"
+            class="hover:text-primary transition-colors cursor-pointer"
+          >
+            ${cat.name}
+          </a>
+        `
+        )
+        .join("");
+    }
+
+    // ==========================
+    // 3. Cargar productos
+    // ==========================
+    let products = [];
+    try {
+      const res = await fetch(
+        `${API_URL}/get_products_by_category/${categoryId}`
+      );
+      products = await res.json();
+    } catch (err) {
+      return;
+    }
+
+    const gridEl = document.getElementById("products-grid");
+    if (!gridEl) return;
+
+    gridEl.innerHTML = products
+      .map((product: any) => {
+        const payload = encodeURIComponent(JSON.stringify(product));
+
+        return `
+        <div class="flex flex-col gap-4 group">
+          <div class="relative w-full aspect-square rounded-2xl overflow-hidden 
+            bg-[#2B0001] shadow-xl shadow-black/30 border border-[#4f0a0a]/40">
+            <a href="/product/${product.id}">
+              <div
+                class="w-full h-full bg-center bg-cover"
+                style="background-image:url('${product.image_url}')"
+              ></div>
+            </a>
+
+            ${
+              product.on_sale
+                ? `<div class="absolute top-2 left-2 bg-[#850000] text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                    OFERTA
+                  </div>`
+                : ""
+            }
+          </div>
+
+          <div>
+            <p class="text-white text-xl font-semibold">
+              ${product.product_name}
+            </p>
+
+            <div class="flex items-center gap-2">
+              <p class="text-[#D4B8B8] text-sm font-bold">
+                ${formatPrice(product.price)}
+              </p>
+              ${
+                product.on_sale
+                  ? `<p class="text-gray-600 text-xs line-through">
+                      ${formatPrice(product.regular_price)}
+                    </p>`
+                  : ""
+              }
+            </div>
+
+            <button
+              data-product="${payload}"
+              class="add-to-cart-btn flex w-full mt-2 items-center justify-center
+              rounded-xl bg-[#3A0001] px-3 py-2 text-white text-xs font-bold"
+            >
+              Agregar
+            </button>
+          </div>
+        </div>
+      `;
+      })
+      .join("");
+
+    // ==========================
+    // 4. Add to cart
+    // ==========================
+    document.querySelectorAll(".add-to-cart-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const raw = btn.getAttribute("data-product");
+        let product: Product = {} as Product;
+        try {
+          if (raw) product = JSON.parse(decodeURIComponent(raw));
+        } catch {}
+
+        const payload = {
+          id: Number(product.id),
+          name: product.product_name,
+          price: Number(product.price),
+          image: product.image_url,
+          quantity: 1,
+        };
+
+        if (window.cartApi?.addItem) {
+          window.cartApi.addItem(payload as any);
+          btn.textContent = "Añadido";
+        }
+      });
+    });
+  });
+</script>
+
+<!-- Cargar productos relacionados y funcion de carrito -->
+<script>
+  import { initCatalog } from "../../utils/js/catalog.js";
+  import { getApiUrl } from "../../utils/keys/api_url";
+  const API_URL = getApiUrl();
+  initCatalog();
+
+  interface Product {
+    id: number;
+    product_name: string;
+    price: number;
+    regular_price: number;
+    on_sale: boolean;
+    image_url: string;
+    material: string;
+    description: string;
+  }
+
+  interface Category {
+    id: number;
+    name: string;
+  }
+
+  window.addEventListener("DOMContentLoaded", async () => {
+    let categories: Category[] = [];
+    let index = 0;
+    let autoSlide: any = null;
+
+    function generateRandomNumber() {
+      return Math.floor(Math.random() * 100000) + Date.now();
+    }
+
+    async function loadCategories() {
+      try {
+        const response = await fetch(
+          `${API_URL}/get_categories/?nocache=${generateRandomNumber()}`
+        );
+        categories = await response.json();
+      } catch (err) {
+        return;
+      }
+    }
+
     try {
       const allProducts = document.querySelectorAll(
         'button[id^="add-to-cart-btn-"]'
       );
       allProducts.forEach((btn) => {
         const raw = btn.getAttribute("data-product") || "";
-        let product = {};
+        let product: Product = {} as Product;
         try {
           product = JSON.parse(decodeURIComponent(raw));
         } catch (e) {
-          product = {};
+          product = {} as Product;
         }
         const payload = {
-          id: String(
-            product?.id ?? product?.product_id ?? product?.sku ?? "unknown"
-          ),
-          name: String(product.product_name ?? product.name ?? ""),
-          price: Number(product.price ?? 0),
-          image: product.image_url ?? product.image ?? "",
+          id: Number(product.id),
+          name: String(product.product_name),
+          price: Number(product.price),
+          image: product.image_url,
           quantity: 1,
         };
         btn.addEventListener("click", function () {
           if (window.cartApi && typeof window.cartApi.addItem === "function") {
-            window.cartApi.addItem(payload);
+            window.cartApi.addItem(payload as any);
             btn.textContent = "Añadido";
           } else {
-            console.warn("cartApi not available");
+            return;
           }
         });
       });
     } catch (e) {
-      console.log(e);
+      return;
     }
 
-    const categories = [];
-
-    let index = 0;
+    // Esperar categorías ANTES de iniciar animaciones
+    await loadCategories();
 
     const item = document.getElementById("carousel-item");
     const leftBtn = document.getElementById("cat-left");
     const rightBtn = document.getElementById("cat-right");
 
-    function updateCategoryAnimated() {
-      // Fade out
+    function updateCategoryAnimated(item: HTMLElement | null, index: number) {
+      if (!item) return;
+
       item.classList.add("opacity-0");
 
       setTimeout(() => {
-        // Cambiar el contenido a un enlace clickeable
-        const cat = categories[index];
-        item.innerHTML = `<a href="/category/${cat.id}" class="transition-opacity duration-500 opacity-100 text-white">${cat.name}</a>`;
-
-        // Fade in
+        const category = categories[index];
+        if (category) {
+          item.innerHTML = `<a href="/category/${category.id}" class="transition-opacity duration-500 opacity-100 text-white">${category.name}</a>`;
+        }
         item.classList.remove("opacity-0");
-      }, 300); // Duración del fade-out
+      }, 300);
     }
 
     // Inicializar
-    item.classList.add("transition-opacity", "duration-500");
-    updateCategoryAnimated();
+    if (item && leftBtn && rightBtn) {
+      item.classList.add("transition-opacity", "duration-500");
+      updateCategoryAnimated(item, index);
+    }
 
-    // Avance automático cada 4 segundos
-    let autoSlide = setInterval(() => {
-      index = (index + 1) % categories.length;
-      updateCategoryAnimated();
-    }, 4000);
-
-    // Reiniciar autoplay al usar flechas
-    function resetAutoSlide() {
+    function resetAutoSlide(item: HTMLElement | null) {
       clearInterval(autoSlide);
       autoSlide = setInterval(() => {
         index = (index + 1) % categories.length;
-        updateCategoryAnimated();
+        updateCategoryAnimated(item, index);
       }, 4000);
     }
 
-    leftBtn.addEventListener("click", () => {
-      index = (index - 1 + categories.length) % categories.length;
-      updateCategoryAnimated();
-      resetAutoSlide();
-    });
+    if (leftBtn && rightBtn) {
+      leftBtn.addEventListener("click", () => {
+        index = (index - 1 + categories.length) % categories.length;
+        updateCategoryAnimated(item, index);
+        resetAutoSlide(item);
+      });
 
-    rightBtn.addEventListener("click", () => {
-      index = (index + 1) % categories.length;
-      updateCategoryAnimated();
-      resetAutoSlide();
-    });
+      rightBtn.addEventListener("click", () => {
+        index = (index + 1) % categories.length;
+        updateCategoryAnimated(item, index);
+        resetAutoSlide(item);
+      });
+    }
   });
 </script>
