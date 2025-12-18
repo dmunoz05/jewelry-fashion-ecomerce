@@ -229,7 +229,7 @@ import BaseLayout from "../../layouts/Layout.astro";
       setTimeout(() => {
         const cat = categories[index];
         if (cat) {
-          item.innerHTML = `<a href="/category/${cat.id}" class="transition-opacity duration-500 opacity-100 text-white">${cat.name}</a>`;
+          item.innerHTML = `<a href="/category?id=${cat.id}" class="transition-opacity duration-500 opacity-100 text-white">${cat.name}</a>`;
         }
         item.classList.remove("opacity-0");
       }, 300);
