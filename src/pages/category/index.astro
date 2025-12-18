@@ -1,27 +1,5 @@
 ---
 import BaseLayout from "../../layouts/Layout.astro";
-
-export async function getStaticPaths() {
-  function generateRandomNumber() {
-    return Math.floor(Math.random() * 100000);
-  }
-
-  const API_URL = import.meta.env.PUBLIC_API_URL;
-
-  try {
-    const res = await fetch(
-      `${API_URL}/get_categories/?nocache=${generateRandomNumber()}`
-    );
-
-    const categories = await res.json();
-
-    return categories.map((cat: any) => ({
-      params: { id: String(cat.id) },
-    }));
-  } catch (error) {
-    return [];
-  }
-}
 ---
 
 <BaseLayout>
@@ -259,8 +237,8 @@ export async function getStaticPaths() {
     // ==========================
     // 1. Obtener ID desde la URL
     // ==========================
-    const pathParts = window.location.pathname.split("/").filter(Boolean);
-    const categoryId = pathParts[pathParts.length - 1];
+    const urlParams = new URLSearchParams(window.location.search);
+    const categoryId = urlParams.get("id");
 
     if (!categoryId) {
       return;
@@ -305,7 +283,7 @@ export async function getStaticPaths() {
         .map(
           (cat: any) => `
           <a
-            href="/category/${cat.id}"
+            href="/category?id=${cat.id}"
             class="hover:text-primary transition-colors cursor-pointer"
           >
             ${cat.name}
@@ -339,7 +317,7 @@ export async function getStaticPaths() {
         <div class="flex flex-col gap-4 group">
           <div class="relative w-full aspect-square rounded-2xl overflow-hidden 
             bg-[#2B0001] shadow-xl shadow-black/30 border border-[#4f0a0a]/40">
-            <a href="/product/${product.id}">
+            <a href="/product?id=${product.id}">
               <div
                 class="w-full h-full bg-center bg-cover"
                 style="background-image:url('${product.image_url}')"
@@ -504,7 +482,7 @@ export async function getStaticPaths() {
       setTimeout(() => {
         const category = categories[index];
         if (category) {
-          item.innerHTML = `<a href="/category/${category.id}" class="transition-opacity duration-500 opacity-100 text-white">${category.name}</a>`;
+          item.innerHTML = `<a href="/category?id=${category.id}" class="transition-opacity duration-500 opacity-100 text-white">${category.name}</a>`;
         }
         item.classList.remove("opacity-0");
       }, 300);

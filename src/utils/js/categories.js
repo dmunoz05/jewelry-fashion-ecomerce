@@ -29,7 +29,7 @@ export async function renderCategories() {
             (c) => `
         <a
           class="group relative flex h-48 items-center justify-center overflow-hidden rounded-xl shadow-lg md:h-64"
-          href="/category/${c.id}"
+          href="/category?id=${c.id}"
         >
           <div
             class="absolute inset-0 bg-cover bg-center blur-xs brightness(0.45) bg-no-repeat transition-transform duration-500 group-hover:scale-110"

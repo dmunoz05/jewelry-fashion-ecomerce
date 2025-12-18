@@ -1,26 +1,5 @@
 ---
 import BaseLayout from "../../layouts/Layout.astro";
-
-export async function getStaticPaths() {
-  function generateRandomNumber() {
-    return Math.floor(Math.random() * 100000) + Date.now();
-  }
-
-  try {
-    const API_URL = import.meta.env.PUBLIC_API_URL;
-    const response = await fetch(
-      `${API_URL}/get_products/home/?nocache=${generateRandomNumber()}`
-    );
-
-    const products = await response.json();
-
-    return products.map((product: any) => ({
-      params: { id: product.id.toString() },
-    }));
-  } catch (error) {
-    return [];
-  }
-}
 ---
 
 <BaseLayout>
@@ -284,8 +263,9 @@ export async function getStaticPaths() {
     // =========================
     // Obtener ID desde la URL
     // =========================
-    var parts = window.location.pathname.split("/").filter(Boolean);
-    var productId = parts[parts.length - 1];
+    const urlParams = new URLSearchParams(window.location.search);
+    const productId = urlParams.get("id");
+
     if (!productId) return;
 
     // =========================
@@ -414,7 +394,7 @@ export async function getStaticPaths() {
           .map(function (p: Product) {
             return (
               '<div class="flex flex-col gap-3">' +
-              '<a href="/product/' +
+              '<a href="/product?id=' +
               p.id +
               '" class="w-full aspect-square bg-cover bg-center rounded-xl" style="background-image:url(\'' +
               p.image_url +

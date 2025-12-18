@@ -101,7 +101,7 @@ function renderCategories() {
     .map(
       (item) => `
         <div class="relative">
-          <a href="/category/${item.id}" class="hover:text-primary transition-colors cursor-pointer">
+          <a href="/category?id=${item.id}" class="hover:text-primary transition-colors cursor-pointer">
             ${item.name}
           </a>
         </div>
@@ -123,7 +123,7 @@ function renderProducts() {
             bg-[#2B0001] shadow-xl shadow-black/30 border border-[#4f0a0a]/40
             transition-all duration-300 group-hover:border-[#850000]/70">
             
-            <a href="/product/${product.id}">
+            <a href="/product?id=${product.id}">
               <div class="w-full h-full bg-center bg-cover transition-transform duration-300 ease-out group-hover:scale-110"
                    style="background-image: url('${product.image_url}');"
                    data-alt="${product.product_name}">
